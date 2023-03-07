@@ -1,36 +1,40 @@
 ---
-title: "Does Money Reduce Violent Crimes?"
+title: "Is there a relationship between Federal Funding and Violent Crimes?
+Is there a relationship between Median Household Income and Violent Crimes?"
 author: "Aileen Li, Nyah Strickland"
 date: "2023-03-04"
-output: github_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-## Does Money Reduce Violent Crimes?
-With the frequent rise of news articles and channels reporting on crimes such as police shootings of unarmed individuals and school shootings, our research question intends to explore how federal funding given toward state public schools relates to median household income and crime rate per state during [time period]. The datasets were imported from the following:
-
-median household income by state 1984-2018
-https://www.google.com/search?q=personal+income+by+state+dataset&ei=raAFZNO_NdqkqtsPubKD4AM&ved=0ahUKEwiTypT47cb9AhVakmoFHTnZADwQ4dUDCBA&uact=5&oq=personal+income+by+state+dataset&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzIFCAAQogQyBQgAEKIEMgUIABCiBDIFCAAQogQyBQgAEKIEOgoIABBHENYEELADOgcIABAeEKIEOgQIIRAKOgUIIRCrAkoECEEYAFCTBFjmKWDwK2gBcAF4AIABjwGIAfkGkgEDNy4zmAEAoAEByAEIwAEB&sclient=gws-wiz-serp
+# Title and Introduction
+## Is there a relationship between Federal Funding and Violent Crimes?
+## Is there a relationship between Median Household Income and Violent Crimes?
 
 
-state public school expenditures 1992-2016:
-https://www.kaggle.com/datasets/noriuk/us-education-datasets-unification-project?resource=download
 
-crime rate by state 1960-2019:
-https://corgis-edu.github.io/corgis/csv/state_crime/
-
+# Tidying
 
 ```{r}
 
 ```
 
-## Clean Datasets
 
-You can also embed plots, for example:
-
+# Joining/Merging 
 ```{r}
 
 ```
+
+# Wrangling
+```{r}
+
+```
+
+# Visualizing
+```{r}
+
+```
+
+# Discussion
