@@ -1,0 +1,200 @@
+---
+title: "HW 1"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = FALSE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+```
+
+### Enter your name and EID here: Aileen Li aql254
+
+**You will submit this homework assignment as a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+------------------------------------------------------------------------
+
+## Part 1: (11 pts)
+
+The dataset `mtcars` was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and other aspects of automobile design and performance for different cars (1973-74 models). Look up the documentation for this data frame with a description of the variables by typing `?mtcars` **in the console** pane.
+
+### Question 1: (2 pt)
+
+Take a look at the first 6 rows of the dataset by using an `R` function in the code chunk below. Do you know about any (or all) of these cars?
+
+```{r}
+# Display first 6 of dataset
+head(mtcars)
+```
+
+**I vaguely know two out of the six cars: Mazda RX4 and Mazda RX4 Wag.**
+
+------------------------------------------------------------------------
+
+### Question 2: (2 pts)
+
+How many rows and columns are there in this data frame in total?
+
+```{r}
+# Get number of rows and columns
+nrow(mtcars)
+ncol(mtcars)
+```
+
+**There are 32 rows and 11 columns in this data frame.**
+
+------------------------------------------------------------------------
+
+### Question 3: (1 pt)
+
+Save `mtcars` in your environment and name it as your `eid`. From now on, use this new object instead of the built-in dataset.
+
+```{r}
+# Save mtcars as my eid
+aql254 = mtcars
+```
+
+**I saved mtcars as aql254, which is my UT eid.**
+
+------------------------------------------------------------------------
+
+### Question 4: (2 pts)
+
+When is your birthday? Using indexing, grab the value of `mpg` that corresponds to the day of your birthday (should be a number between 1 and 31).
+
+```{r}
+# Get mpg value matching my birthday
+#install.packages("tidyverse")
+library(tidyverse)
+aql254
+aql254[1,1]
+```
+
+**Using indexing, I obtained an mpg value that corresponded to my birthday.**
+
+------------------------------------------------------------------------
+
+### Question 5: (2 pts)
+
+Using logical indexing, count the number of rows in the dataset where the variable `mpg` takes on values greater than 30.
+
+```{r}
+# Find number of rows where mpg > 30
+aql254
+mpg_30 = aql254 |> filter(mpg > 30)
+nrow(mpg_30)
+```
+
+**There are four rows in mtcars where the variable, mpg, takes on values greater than 30.**
+
+------------------------------------------------------------------------
+
+### Question 6: (2 pts)
+
+Let's create a new variable called `kpl` which converts the fuel efficiency `mpg` in kilometers per liter. Knowing that 1 mpg corresponds to 0.425 kpl, complete the following code and calculate the max kpl:
+
+```{r}
+# Create new variable kpl, which is a function of mpg. Calculate max kpl
+mtcars_kpl = aql254 |> mutate(kpl = mpg*.425)
+mtcars_kpl[,12]
+max(mtcars_kpl[,12])
+```
+
+**The max kpl, which stands for kilometers per hour, is 14.4075.**
+
+------------------------------------------------------------------------
+
+## Part 2: (6 pts)
+
+Let's quickly explore another built-in dataset: `airquality` which contains information about daily air quality measruements in New York, May to September 1973. 
+
+### Question 7: (2 pts)
+
+Calculate the mean `Ozone` (in ppb). Why does it make sense to get this answer? *Hint: take a look at the column `Ozone` in the dataset.*
+
+```{r}
+# Calculate mean ozone in airquality
+head(airquality)
+airquality[,1]
+mean(airquality[,1])
+
+```
+
+**Getting the mean of ozone in the dataset results in an NA. This makes sense because there are NA values in the ozone column, making it impossible to get a numerical value for the mean.**
+
+------------------------------------------------------------------------
+
+### Question 8: (2 pts)
+
+Look at the documentation for the function `mean()` by running `?mean` **in the console**. What argument should be used to find the mean value that we were not able to get in the previous question? What type of values does that argument take?
+
+**The na.rm argument should be used to find the mean value of ozone without getting an NA. The argument can be TRUE or FALSE but for this case, we want it to be TRUE**
+
+------------------------------------------------------------------------
+
+### Question 9: (2 pts)
+
+Sometimes the R documentation does not feel complete. We wish we had more information or more examples. Find a post online (include the link) that can help you use that argument in the `mean()` function. Then finally find the mean ozone!
+
+```{r}
+# Find a link and calculate ozone mean after removing NAs
+mean(airquality[,1], na.rm = TRUE)
+
+```
+
+**The link, https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/mean, helped me better understand how to use the mean function and its arguments. I found the mean ozone is 42.12931**
+
+------------------------------------------------------------------------
+
+## Part 3: (5 pts)
+
+The Internet clothing retailer Stitch Fix has developed a new model for selling clothes to people online. Their basic approach is to send people a box of 5--6 items of clothing and allow them to try the clothes on. Customers keep (and pay for) what they like while mailing back the remaining clothes. Stitch Fix then sends customers a new box of clothes typically a month later.
+
+A critical question for Stitch Fix to consider is "Which clothes should the send to each customer?" Since customers do not request specific clothes, Stitch Fix has to come up with 5--6 items on its own that it thinks the customers will like (and therefore buy). In order to learn something about each customer, they administer an **intake survey** when a customer first signs up for the service. The survey has about 20 questions and the data is then used to predict what kinds of clothes customers will like. In order to use the data from the intake survey, a statistical algorithm must be built in order to process the customer data and make clothing selections.
+
+Suppose you are in charge of building the intake survey and the algorithm for choosing clothes based on the intake survey data. 
+
+
+### Question 10: (2 pts)
+
+What kinds of questions do you think might be useful to ask of a customer in an intake survey in order to better choose clothes for them? What kinds of data would be most valuable? See if you can come up with at least 5 items.
+
+**What's your fashion style? How important is color co-ordination to you? How much do you value sustainability? How much color do you like in your outfits? What's your budget? Would you like suggestions of the latest trends? How much do you value comfort over fashion? Is there any fabric material(s) you do not prefer?.**
+
+### Question 11: (3 pts)
+
+In addition to the technical challenges of collecting the data and building this algorithm, you must also consider the impact the algorithm may have on the people involved. What potential negative impact might the algorithm have on the customers who are submitting their data? Consider both the data being submitted as well as the way in which the algorithm will be used when answering this question.
+
+
+**People's preferences in clothing change over time, so the algorithm that uses data from the intake survey may not adjust to that change.The algorithm may recommend too many similar items to the customer, which makes it redundant to buy, and lead to the customers finding the service unhelpful. There is also a privacy issue since the intake survey takes data from the customers that can be taken and used for purposes other than for the algorithm without the customers' consent.**
+
+
+
+
+
+
+
+------------------------------------------------------------------------
+
+## Formatting: (3 pts)
+
+Knit your file! Into pdf directly or into html. 
+
+Is it working? If not, try to decipher the error message (look up the error message, consult websites such as [stackoverflow](https://stackoverflow.com/) or [crossvalidated](https://stats.stackexchange.com/). 
+
+Once it knits in html, click on `Open in Browser` at the top left of the window pops out. Print your html file into pdf from your browser. Any issue? Ask your classmates or TA!
+
+------------------------------------------------------------------------
+
+```{r, echo=F}
+## DO NOT DELETE THIS BLOCK!
+sessionInfo()
+```
