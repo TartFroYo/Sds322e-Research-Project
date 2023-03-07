@@ -9,10 +9,9 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-# Title and Introduction
-## Is there a relationship between Federal Funding and Violent Crimes?
-## Is there a relationship between Median Household Income and Violent Crimes?
 
+# Finding the relationship between Federal Funding and Violent Crimes as well as the
+# relationship between Median Household Income and Violent Crimes.
 
 
 # Tidying
