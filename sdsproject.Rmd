@@ -9,13 +9,17 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-# Title and Introduction
-## Is there a relationship between Federal Funding and Violent Crimes?
-## Is there a relationship between Median Household Income and Violent Crimes?
+# Finding the Relationship between Federal Revenue for Public Schools and Violent Crimes, as well as Median Household Income and Violent Crimes
 
+  For many years, a number of U.S. states have made changes to public school funding. One of our research questions is if there is a relationship between change in federal revenue for public schools and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship, depending on what kind, states can make changes in their budget for the betterment of their enrolled students. We expected the more funding for public schools, the less violent crimes there are by state.
+  
+  As inflation increases annually, household incomes must also take this into account to adjust for standard of living in each state. Our second research question is if there is a relationship between median household income and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship between these two datasets, then state governments should make changes in their policies to help states where households are most affected. We expect the greater the median household income, the less violent crimes there are by state. 
 
+## Is there a relationship between Federal Revenue for Public Schools and Crimes?
+## Is there a relationship between Median Household Income and Crimes?
 
 # Tidying
+We tidied the Median Household Income and the U.S Education
 
 ```{r}
 
