@@ -10,11 +10,29 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Finding the Relationship between Federal Revenue for Public Schools and Violent Crimes, as well as Median Household Income and Violent Crimes
+
+  For many years, a number of U.S. states have made changes to public school funding. One of our research questions is if there is a relationship between change in federal revenue for public schools and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship, depending on what kind, states can make changes in their budget for the betterment of their enrolled students. We expected the more funding for public schools, the less violent crimes there are by state.
+  
+  As inflation increases annually, household incomes must also take this into account to adjust for standard of living in each state. Our second research question is if there is a relationship between median household income and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship between these two datasets, then state governments should make changes in their policies to help states where households are most affected. We expect the greater the median household income, the less violent crimes there are by state. 
+
+## Is there a relationship between Federal Revenue for Public Schools and Crimes?
+## Is there a relationship between Median Household Income and Crimes?
+
+The median household income, U.S. Education, and state crime rate datasets were acquired from the U.S. Census Bureau, U.S. Census Bureau and the National Center for Education Statistics (NCES), and Unified Crime Reporting Statistics and under the collaboration of the U.S. Department of Justice and the Federal Bureau of Investigation, respectively. We joined the data sets by the state names, which are the unique rows, and year. Specifically, we looked into the years from 1992 to 2016 for both research questions. For the median household income dataset, the unique variable is the median household income (Median income) in the current dollars dataset, measuring the annual state median household incomes without considering inflation. As for the U.S. Education dataset, the unique variable is federal revenue (FEDERAL_REVENUE), and for the violent crime rate dataset, the unique variables are violent crime rate (Data.Rates.Violent.All), nonviolent crime rate (Data.Rates.Property.All), burglary crime rate (Data.Rates.Property.Burglary), and murder rate (Data.Rates.Violent.Murder). The key variables are categorical while all the unique variables are numerical. These are the eight variables required for the project. The following are the links to the datasets: 
+
+Median Household Income by State (https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h08.xls)
+U.S. Education Dataset (https://www.kaggle.com/datasets/noriuk/us-education-datasets-unification-project?resource=download)
+Crime Rate by State Dataset (https://corgis-edu.github.io/corgis/csv/state_crime/)
+=======
+
 # Finding the relationship between Federal Funding and Violent Crimes as well as the
 # relationship between Median Household Income and Violent Crimes.
+>>>>>>> 227d9e2c6f15738c19e1b5d212218af508d3751f
 
 
 # Tidying
+We tidied the Median Household Income and the U.S Education
 
 ```{r}
 
