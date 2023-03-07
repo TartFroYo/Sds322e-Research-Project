@@ -26,10 +26,6 @@ U.S. Education Dataset (https://www.kaggle.com/datasets/noriuk/us-education-data
 Crime Rate by State Dataset (https://corgis-edu.github.io/corgis/csv/state_crime/)
 =======
 
-# Finding the relationship between Federal Funding and Violent Crimes as well as the
-# relationship between Median Household Income and Violent Crimes.
->>>>>>> 227d9e2c6f15738c19e1b5d212218af508d3751f
-
 
 # Tidying
 We tidied the Median Household Income and the U.S Education
