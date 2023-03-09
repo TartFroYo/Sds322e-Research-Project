@@ -42,11 +42,14 @@ i = min(which(med_income_base$State=='Wyoming'))
 med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
 
 # make desired data tidy
+med_income_tidy = med_income_untidy |> 
+  pivot_longer(!State, names_to="Year", values_to="Median_Income") |> 
+  filter(substr(Year, 1, 4) %in% (1992:2016))
+med_income_tidy$State = toupper(med_income_tidy$State)
 
-
+nrow(med_income_tidy)
 ```
 
-
-
+There are 1,300 observations of the 50 states from the year 1992 to 2016. We noticed that there are years with numbers in parentheses, an indication of some kind, but we were unable to determine what these values meant because of the lack of documentation for this dataset.
 
 
