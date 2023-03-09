@@ -3,6 +3,8 @@ title: "MHIvsCrimes"
 author: "Aileen Li"
 date: "2023-03-08"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -11,20 +13,38 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r lib}
+library(tidyverse)
 ```
 
-## Including Plots
+## Tidying
+```{r tidy}
+# find standard error columns and delete them
+med_income_base = h08_1_
+colnames(med_income_base) = paste(seq_along(med_income_base))
+del_col = list()
 
-You can also embed plots, for example:
+for (col in 1:ncol(h08_1_)) {
+  if (col!=1 & (col-1)%%2==0) {
+    del_col= append(del_col, as.character(col))
+  }
+}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+med_income_base = med_income_base[,!names(med_income_base) %in% del_col]
+
+# rename columns
+colnames(med_income_base) = med_income_base[4,]
+
+# remove undesired data
+med_income_base = med_income_base[-(1:6),]
+i = min(which(med_income_base$State=='Wyoming'))
+med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
+
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+
