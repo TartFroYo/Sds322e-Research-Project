@@ -36,7 +36,7 @@ med_income_base = med_income_base[,!names(med_income_base) %in% del_col]
 colnames(med_income_base) = med_income_base[4,]
 
 # remove undesired data
-med_income_base = med_income_base[-(1:6),]
+med_income_base = med_income_base[-(1:6),-9]
 
 i = min(which(med_income_base$State=='Wyoming'))
 med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
@@ -47,9 +47,16 @@ med_income_tidy = med_income_untidy |>
   filter(substr(Year, 1, 4) %in% (1992:2016))
 med_income_tidy$State = toupper(med_income_tidy$State)
 
-nrow(med_income_tidy)
+# find years with () and duplicate years other than 2013
+pyears = med_income_tidy[grep(")$",med_income_tidy$Year),]
+dupl_years = pyears |>
+  mutate(compare=substr(Year,1,6)) |>
+  select(State, compare) |> group_by(State, compare) |>
+  filter(duplicated(compare))
+
+# remove second appearance of same year w/ state and () from some years
+med_income_tidy$Year = substr(med_income_tidy$Year, 1,4)
+med_income = med_income_tidy
 ```
 
-There are 1,300 observations of the 50 states from the year 1992 to 2016. We noticed that there are years with numbers in parentheses, an indication of some kind, but we were unable to determine what these values meant because of the lack of documentation for this dataset.
-
-
+There are 1,300 observations of the 50 states from the year 1992 to 2016. We noticed that there are years with numbers in parentheses, an indication of some kind, but we were unable to determine what these values meant because of the lack of documentation for this dataset. 
