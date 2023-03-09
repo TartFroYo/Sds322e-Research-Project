@@ -50,7 +50,8 @@ We tidied the Median Household Income and the U.S Education
 # Rename dataset to us_education
 
 us_education <- states_all_extended
-us_education <- us_education %>% select('STATE', 'YEAR', 'FEDERAL_REVENUE') %>%  filter(!str_detect(STATE, "^DISTRICT")) %>% rename("State" = "STATE", "Year" = "YEAR", "Federal_Revenue" = "FEDERAL_REVENUE") 
+us_education <- us_education %>% select('STATE', 'YEAR', 'FEDERAL_REVENUE') %>%  filter(!str_detect(STATE, "^DISTRICT")) %>% rename("State" = "STATE", "Year" = "YEAR", "Federal_Revenue" = "FEDERAL_REVENUE") %>% # Make sure state names are identical in both datasets
+mutate(State = str_replace(State, "_", " "))
 
 # Rename crime variable names so they don't have the word 'Data' in it
 crime_rate <- state_crime %>% select('State', 'Year', 'Data.Rates.Violent.All', 'Data.Rates.Property.All', 'Data.Rates.Property.Burglary', 'Data.Rates.Violent.Murder') %>%  filter(!str_detect(State, "^District")) %>% rename("All.Property.Rates" = "Data.Rates.Property.All", "All.Property.Burglary.Rates" = "Data.Rates.Property.Burglary", "All.Violent.Rates" = "Data.Rates.Violent.All", "All.Murder.Rates" = "Data.Rates.Violent.Murder") %>% #put year in ascending order so it is easy to merge this dataset with us_education 
@@ -74,7 +75,7 @@ question1 <- left_join(us_education,crime_rate, by = c("Year", "State"))
 question1
 nrow(question1)
 ```
-There are 1682 observations and 1 unique variable (Federal_Revenue) in the us_education dataset while in the state_crime dataset there are 3315 observations and 4 unique variables (All.Property.Rates, All.Property.Burglary.Rates, All.Violent.Rates, All.Murder.Rates). Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these two datasets into a single dataset question1, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted.
+There are 1682 observations and 1 unique variable (Federal_Revenue) in the us_education dataset while in the state_crime dataset there are 3315 observations and 4 unique variables (All.Property.Rates, All.Property.Burglary.Rates, All.Violent.Rates, All.Murder.Rates). Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these two datasets into a single dataset question1, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted. There were 1373 observations in the Year variable that did not fit this time period were dropped and got NA values.
 
 # Wrangling
 ```{r}
