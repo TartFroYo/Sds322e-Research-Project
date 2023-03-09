@@ -2,7 +2,9 @@
 title: "Finding the Relationship between Federal Revenue for Public Schools and Violent Crimes, as well as Median Household Income and Violent Crimes"
 author: "Aileen Li, Nyah Strickland"
 date: "2023-03-04"
-output: html_document
+output: 
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
