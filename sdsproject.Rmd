@@ -42,27 +42,41 @@ state_crime <- read_csv("state_crime.csv")
 h08_1_ <- read_excel("h08 (1).xls")
 ```
 
-# Tidying
-We tidied the Median Household Income and the U.S Education
+## Is there a relationship between Federal Funding and Crimes?
 
+## Is there a relationship between Median Household Income and Crimes?
+
+For many years, a number of U.S. states have made changes to public school funding. One of our research questions is if there is a relationship between change in federal revenue for public schools and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship, depending on what kind, states can make changes in their budget for the betterment of their enrolled students. We expected the more funding for public schools, the less violent crimes there are by state.
+
+As inflation increases annually, household incomes must also take this into account to adjust for the standard of living in each state. Our second research question is if there is a relationship between median household income and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship between these two datasets, then state governments should make changes in their policies to help states where households are most affected. We expect the greater the median household income, the less violent crimes there are by state.
+
+The median household income, U.S. Education, and state crime rate datasets were acquired from the U.S. Census Bureau, U.S. Census Bureau and the National Center for Education Statistics (NCES), and Unified Crime Reporting Statistics and under the collaboration of the U.S. Department of Justice and the Federal Bureau of Investigation, respectively. We joined the data sets by the state names, which are the unique rows, and year. Specifically, we looked into the years from 1992 to 2016 for both research questions. For the median household income dataset, the unique variable is the median household income (Median income) in the current dollars dataset, measuring the annual state median household incomes without considering inflation. As for the U.S. Education dataset, the unique variable is federal revenue (FEDERAL_REVENUE), and for the violent crime rate dataset, the unique variables are violent crime rate (Data.Rates.Violent.All), property crime rate (Data.Rates.Property.All), burglary crime rate (Data.Rates.Property.Burglary), and murder rate (Data.Rates.Violent.Murder). The key variables are categorical while all the unique variables are numerical. These are the eight variables required for the project. The following are the links to the datasets:
+
+Median Household Income by State (<https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h08.xls>) U.S. Education Dataset (<https://www.kaggle.com/datasets/noriuk/us-education-datasets-unification-project?resource=download>) Crime Rate by State Dataset (<https://corgis-edu.github.io/corgis/csv/state_crime/>)
+
+# Tidying
 ```{r}
 # For all datasets, remove District of Columbia since it is not a state and only keep key and unique variables for each dataset 
 # Rename dataset to us_education
 
-us_education <- states_all_extended
-us_education <- us_education %>% select('STATE', 'YEAR', 'FEDERAL_REVENUE') %>%  filter(!str_detect(STATE, "^DISTRICT")) %>% rename("State" = "STATE", "Year" = "YEAR", "Federal_Revenue" = "FEDERAL_REVENUE") %>% # Make sure state names are identical in both datasets
+us_education <- states_all_extended %>% 
+select('STATE', 'YEAR', 'FEDERAL_REVENUE') %>% 
+filter(!str_detect(STATE, "^DISTRICT")) %>%
+rename("State" = "STATE", "Year" = "YEAR",  "Federal_Revenue" = "FEDERAL_REVENUE") %>%
+# Make sure state names are identical in both datasets
 mutate(State = str_replace(State, "_", " "))
 
 # Rename crime variable names so they don't have the word 'Data' in it
-crime_rate <- state_crime %>% select('State', 'Year', 'Data.Rates.Violent.All', 'Data.Rates.Property.All', 'Data.Rates.Property.Burglary', 'Data.Rates.Violent.Murder') %>%  filter(!str_detect(State, "^District")) %>% rename("All.Property.Rates" = "Data.Rates.Property.All", "All.Property.Burglary.Rates" = "Data.Rates.Property.Burglary", "All.Violent.Rates" = "Data.Rates.Violent.All", "All.Murder.Rates" = "Data.Rates.Violent.Murder") %>% #put year in ascending order so it is easy to merge this dataset with us_education 
-  arrange(Year)
+crime_rate <- state_crime %>% 
+select('State', 'Year', 'Data.Rates.Violent.All', 'Data.Rates.Property.All', 'Data.Rates.Property.Burglary', 'Data.Rates.Violent.Murder') %>% 
+filter(!str_detect(State, "^District")) %>%   rename("All_Property_Rates" = "Data.Rates.Property.All", "All_Property_Burglary_Rates" = "Data.Rates.Property.Burglary", "All_Violent_Rates" = "Data.Rates.Violent.All", "All_Murder_Rates" = "Data.Rates.Violent.Murder") %>% 
+#put year in ascending order so it is easy to merge this    dataset with us_education 
+arrange(Year)
 # make state names be uppercase to make merging the datasets easier
-crime_rate$State<- toupper(crime_rate$State)
-
+crime_rate$State <- toupper(crime_rate$State)
 ```
 
-
-# Joining/Merging 
+# Joining/Merging
 ```{r}
 # Note how many observations are in each data set
 nrow(us_education)
@@ -72,12 +86,11 @@ ncol(crime_rate)
 # Left join state_crime to us_education by key variable Year and State
 # Left joining crime_rate to us_education makes the question1 dataset start with 1992 
 # Filter missing values of federal revenue 
-question1 <- left_join(us_education,crime_rate, by = c("Year", "State")) %>% filter(!is.na(Federal_Revenue)) 
-question1
-nrow(question1)
-
+research_questions <- left_join(us_education,crime_rate, by = c("Year", "State")) %>% filter(!is.na(Federal_Revenue)) 
+research_questions
+nrow(research_questions)
 ```
-There are 1682 observations and 1 unique variable (Federal_Revenue) in the us_education dataset while in the state_crime dataset there are 3055 observations and 4 unique variables (All.Property.Rates, All.Property.Burglary.Rates, All.Violent.Rates, All.Murder.Rates). Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these two datasets into a single dataset question1, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted. There are 1250 observations in the question1 dataset. This means that from the total number of overlapped observations (being 3055-1682=1373) in both us_education and state_crime datasets, there were 1373-1250=123 observations that had missing values. Since the crime_rate was left joined to us_education, the missing values likely arose from not matching with the year and state name for Federal_Revenue as this variable records state public school federal funding from 1992-2016. 
+There are 1682 observations and 1 unique variable (Federal_Revenue) in the us_education dataset while in the state_crime dataset there are 3055 observations and 4 unique variables (All_Property_Rates, All_Property_Burglary_Rates, All_Violent_Rates, All_Murder_Rates). Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these 2 datasets into a single dataset research_questions, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted. There are 1250 observations in the question1 dataset. This means that from the total number of overlapped observations (being 3055-1682=1373) in both us_education and state_crime datasets, there were 1373-1250=123 observations that had missing values. Since the crime_rate was left joined to us_education, the missing values likely arose from not matching with the year and state name for Federal_Revenue as this variable records state public school federal funding from 1992-2016.
 
 # Wrangling
 ```{r}
