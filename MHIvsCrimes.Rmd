@@ -37,9 +37,11 @@ colnames(med_income_base) = med_income_base[4,]
 
 # remove undesired data
 med_income_base = med_income_base[-(1:6),]
+
 i = min(which(med_income_base$State=='Wyoming'))
 med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
 
+# make desired data tidy
 
 
 ```
