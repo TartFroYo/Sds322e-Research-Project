@@ -57,8 +57,8 @@ Median Household Income by State (<https://www2.census.gov/programs-surveys/cps/
 # Tidying
 ```{r}
 # For all datasets, remove District of Columbia since it is not a state and only keep key and unique variables for each dataset 
-# Rename dataset to us_education
 
+# rename dataset to us_education
 us_education <- states_all_extended %>% 
 select('STATE', 'YEAR', 'FEDERAL_REVENUE') %>% 
 filter(!str_detect(STATE, "^DISTRICT")) %>%
@@ -66,14 +66,43 @@ rename("State" = "STATE", "Year" = "YEAR",  "Federal_Revenue" = "FEDERAL_REVENUE
 # Make sure state names are identical in both datasets
 mutate(State = str_replace(State, "_", " "))
 
-# Rename crime variable names so they don't have the word 'Data' in it
+# rename crime variable names so they don't have the word 'Data' in it
 crime_rate <- state_crime %>% 
 select('State', 'Year', 'Data.Rates.Violent.All', 'Data.Rates.Property.All', 'Data.Rates.Property.Burglary', 'Data.Rates.Violent.Murder') %>% 
 filter(!str_detect(State, "^District")) %>%   rename("All_Property_Rates" = "Data.Rates.Property.All", "All_Property_Burglary_Rates" = "Data.Rates.Property.Burglary", "All_Violent_Rates" = "Data.Rates.Violent.All", "All_Murder_Rates" = "Data.Rates.Violent.Murder") %>% 
 #put year in ascending order so it is easy to merge this    dataset with us_education 
 arrange(Year)
+
 # make state names be uppercase to make merging the datasets easier
 crime_rate$State <- toupper(crime_rate$State)
+
+# rename h08_1_ dataset
+# find standard error columns and delete them
+med_income_base = h08_1_
+colnames(med_income_base) = paste(seq_along(med_income_base))
+del_col = list()
+
+for (col in 1:ncol(h08_1_)) {
+  if (col!=1 & (col-1)%%2==0) {
+    del_col= append(del_col, as.character(col))
+  }
+}
+med_income_base = med_income_base[,!names(med_income_base) %in% del_col]
+
+# rename columns
+colnames(med_income_base) = med_income_base[4,]
+
+# remove extraneous data
+med_income_base = med_income_base[-(1:6),]
+
+i = min(which(med_income_base$State=='Wyoming'))
+med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
+
+# make desired data tidy
+med_income_tidy = med_income_untidy |> 
+  pivot_longer(!State, names_to="Year", values_to="Median_Income") |> 
+  filter(substr(Year, 1, 4) %in% (1992:2016))
+med_income_tidy$State = toupper(med_income_tidy$State)
 ```
 
 # Joining/Merging
