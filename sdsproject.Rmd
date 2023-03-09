@@ -71,7 +71,7 @@ nrow(crime_rate)
 ncol(crime_rate)
 # Left join state_crime to us_education by key variable Year and State
 # This remove years before 1992 in crime_rate
-question1 <- left_join(us_education,crime_rate, by = c("Year", "State"))
+question1 <- left_join(us_education,crime_rate, by = c("Year", "State")) %>% filter(!is.na(Federal_Revenue)) 
 question1
 nrow(question1)
 ```
