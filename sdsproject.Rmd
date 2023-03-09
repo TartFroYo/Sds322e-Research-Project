@@ -67,7 +67,7 @@ ncol(us_education)
 nrow(crime_rate)
 ncol(crime_rate)
 # Merge us_education and state_crime by key variable Year
-question1 <- left_join(us_education,crime_rate, by = "Year") %>% filter("Year" > 1991)
+question1 <- left_join(us_education,crime_rate, by = "Year")
 question1
 nrow(question1)
 ```
