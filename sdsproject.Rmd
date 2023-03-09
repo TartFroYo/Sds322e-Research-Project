@@ -3,8 +3,8 @@ title: "Finding the Relationship between Federal Revenue for Public Schools and 
 author: "Aileen Li, Nyah Strickland"
 date: "2023-03-04"
 output: 
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -56,18 +56,18 @@ rename("State" = "STATE", "Year" = "YEAR",  "Federal_Revenue" = "FEDERAL_REVENUE
 # Make sure state names are identical in both datasets
 mutate(State = str_replace(State, "_", " "))
 
-# rename crime variable names so they don't have the word 'Data' in it
+# Rename crime variable names so they don't have the word 'Data' in it
 crime_rate <- state_crime %>% 
 select('State', 'Year', 'Data.Rates.Violent.All', 'Data.Rates.Property.All', 'Data.Rates.Property.Burglary', 'Data.Rates.Violent.Murder') %>% 
 filter(!str_detect(State, "^District")) %>%   rename("All_Property_Rates" = "Data.Rates.Property.All", "All_Property_Burglary_Rates" = "Data.Rates.Property.Burglary", "All_Violent_Rates" = "Data.Rates.Violent.All", "All_Murder_Rates" = "Data.Rates.Violent.Murder") %>% 
 #put year in ascending order so it is easy to merge this    dataset with us_education 
 arrange(Year)
 
-# make state names be uppercase to make merging the datasets easier
+# Make state names be uppercase to make merging the datasets easier
 crime_rate$State <- toupper(crime_rate$State)
 
-# rename h08_1_ dataset
-# find standard error columns and delete them
+# Rename h08_1_ dataset
+# Find standard error columns and delete them
 med_income_base = h08_1_
 colnames(med_income_base) = paste(seq_along(med_income_base))
 del_col = list()
@@ -79,16 +79,16 @@ for (col in 1:ncol(h08_1_)) {
 }
 med_income_base = med_income_base[,!names(med_income_base) %in% del_col]
 
-# rename columns
+# Rename columns
 colnames(med_income_base) = med_income_base[4,]
 
-# remove extraneous data
+# Remove extraneous data
 med_income_base = med_income_base[-(1:6),]
 
 i = min(which(med_income_base$State=='Wyoming'))
 med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
 
-# make desired data tidy
+# Make desired data tidy
 med_income_tidy = med_income_untidy |> 
   pivot_longer(!State, names_to="Year", values_to="Median_Income") |> 
   filter(substr(Year, 1, 4) %in% (1992:2016))
@@ -109,6 +109,7 @@ research_questions <- left_join(us_education,crime_rate, by = c("Year", "State")
 research_questions
 nrow(research_questions)
 ```
+
 There are 1682 observations and 1 unique variable (Federal_Revenue) in the us_education dataset while in the state_crime dataset there are 3055 observations and 4 unique variables (All_Property_Rates, All_Property_Burglary_Rates, All_Violent_Rates, All_Murder_Rates). Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these 2 datasets into a single dataset research_questions, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted. There are 1250 observations in the question1 dataset. This means that from the total number of overlapped observations (being 3055-1682=1373) in both us_education and state_crime datasets, there were 1373-1250=123 observations that had missing values. Since the crime_rate was left joined to us_education, the missing values likely arose from not matching with the year and state name for Federal_Revenue as this variable records state public school federal funding from 1992-2016.
 
 # Wrangling
