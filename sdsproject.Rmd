@@ -28,19 +28,50 @@ The median household income, U.S. Education, and state crime rate datasets were 
 ### Is there a relationship between Median Household Income and Crimes?
 =======
 
+``` {r}
+library(tidyverse)
+library(readr)
+library(readxl)
+```
+
+```{r}
+states_all_extended <- read_csv("states_all_extended.csv")
+state_crime <- read_csv("state_crime.csv")
+h08_1_ <- read_excel("h08 (1).xls")
+```
 
 # Tidying
 We tidied the Median Household Income and the U.S Education
 
 ```{r}
+# For all datasets, remove District of Columbia since it is not a state and only keep key and unique variables for each dataset 
+# Rename dataset to us_education
+
+us_education <- states_all_extended
+us_education <- us_education %>% select('STATE', 'YEAR', 'FEDERAL_REVENUE') %>%  filter(!str_detect(STATE, "^DISTRICT")) %>% rename("State" = "STATE", "Year" = "YEAR", "Federal_Revenue" = "FEDERAL_REVENUE") 
+
+# Rename crime variable names so they don't have the word 'Data' in it
+crime_rate <- state_crime %>% select('State', 'Year', 'Data.Rates.Violent.All', 'Data.Rates.Property.All', 'Data.Rates.Property.Burglary', 'Data.Rates.Violent.Murder') %>%  filter(!str_detect(State, "^District")) %>% rename("All.Property.Rates" = "Data.Rates.Property.All", "All.Property.Burglary.Rates" = "Data.Rates.Property.Burglary", "All.Violent.Rates" = "Data.Rates.Violent.All", "All.Murder.Rates" = "Data.Rates.Violent.Murder") %>% #put year in ascending order so it is easy to merge this dataset with us_education 
+  arrange(Year)
+# make state names be uppercase to make merging the datasets easier
+crime_rate$State<- toupper(crime_rate$State)
 
 ```
 
 
 # Joining/Merging 
 ```{r}
-
+# Note how many observations are in each data set
+nrow(us_education)
+ncol(us_education)
+nrow(crime_rate)
+ncol(crime_rate)
+# Merge us_education and state_crime by key variable Year
+question1 <- left_join(us_education,crime_rate, by = "Year") %>% filter("Year" > 1991)
+question1
+nrow(question1)
 ```
+There are 1682 observations and 1 unique variable in the us_education dataset while in the state_crime dataset there are 3315 observations and 4 unique variables. Between us_education and state_crime, there are 2 ID variables in common. After joining these two datasets into dataset question1, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted.
 
 # Wrangling
 ```{r}
