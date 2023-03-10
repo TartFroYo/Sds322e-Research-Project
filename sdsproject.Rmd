@@ -209,6 +209,7 @@ WRITE
 =======
 
 # Visualizing
+### 1 Variable Plots
 Create a plot graphing one variable.
 ```{r vis1}
 # find max violent crime rate
@@ -216,11 +217,12 @@ max(crime_rate$All_Violent_Rates)
 
 # plot a histogram of all violent crime rates across the states
 crime_rate |> 
-  # filter(Year==2000) |> 
+  filter(Year==2002) |>
   ggplot(aes(x= All_Violent_Rates)) + 
   geom_histogram(bins=10, color ="darkred", fill = "red") + 
-  labs(title = "U.S. State Distribution of All Violent Crime Rates ", y = "Frequency") + 
-  scale_x_continuous(name = "All Violent Crime Rates", breaks =seq(0, 1245,150)) + 
+  labs(title = "U.S. State Distribution of All Violent Crime Rates in 2002 ", 
+       y = "Frequency") + 
+  scale_x_continuous(name = "All Violent Crime Rates per 100,000 in 2002", breaks =seq(0, 1245,150)) + 
   theme_bw()
 
 ```
@@ -235,18 +237,19 @@ summary(us_education$Federal_Revenue)
 
 # plot a histogram of U.S. federal funding to state public schools
 rqs %>% 
-  # filter(Year==2000) |> 
+  filter(Year==2002) |>
   ggplot(aes(x=Fed_Rev)) + 
   geom_histogram(bins=30, color ="darkblue", fill = "lightblue") + 
-  labs(title = "Distribution of Federal Funds to State Public Schools", 
+  labs(title = "Distribution of Federal Funds to State Public Schools in 2002", 
        y = "Frequency") +
-  scale_x_continuous(name = "U.S. Federal Funding to State Public Schools by Hundred Thousands") +
+  scale_x_continuous(name = "U.S. Federal Funding to State Public Schools by Hundred Thousands in 2002") +
   # theme(axis.text.x = element_text(angle=90)) + 
   theme_bw()
 
 ```
 The distribution of federal funds to state public schools is strongly skewed to the right. This shows that not a lot of state public schools receive federal funds.
 
+### 2 Variable Plots
 Create a plot graphing two variables.
 ```{r vis3}
 # Graph 2 variables: x = year, y = federal funds to state schools
@@ -281,8 +284,8 @@ rqs %>%
   ggplot(aes(x = Year, y = mi)) + 
   geom_point(aes(color = State), size =1/2) + 
   labs(title = "U.S. State Median Household Income Over Time") + 
-  scale_y_discrete(c("U.S. State Median Household Income ($)")) + 
-  scale_x_discrete(name = "Years (1992-2016)") +  
+  scale_y_continuous(name="U.S. State Median Household Income ($)", breaks=seq(0, 100, 10)) + 
+  scale_x_continuous(name = "Years (1992-2016)", breaks=seq(1992, 2016, 4)) +  
   # theme(axis.text.x = element_text(angle=90)) + 
   theme_bw() +
 #Connect each state's points with a line
@@ -292,6 +295,7 @@ rqs %>%
         legend.title = element_text(size=10),
         legend.text = element_text(size=5))
   # theme(legend.position = "none")
+
 ```
 The distribution of U.S. state median household income over 1992-2016 has a generally positive upward slope. This shows that as time goes on, state median household income also increases.
 
@@ -309,18 +313,35 @@ FM2 <- FM2[626:1250,]
 ```{r vis6}
 # graph of first 25 states in alphabetical order
 FM1 %>% 
-        ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + geom_point(aes(color = State), size =1/2) + labs(title = "The Relationship between All Murder Rates & Public School Federal Funds", 
-        y = "Federal Funds to State Public Schools ($)") + scale_x_continuous(name = "All Murder Rates", breaks =seq(0, 21,3)) + theme(axis.text.x = element_text(angle=90)) + theme_bw() + facet_wrap(vars(State)) + theme(legend.position = "none") 
+  ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + 
+  geom_point(aes(color = State), size =1/2) + 
+  labs(title = "The Relationship between All Murder Rates & Public School Federal Funds", 
+        y = "Federal Funds to State Public Schools ($)") + 
+  scale_x_continuous(name = "All Murder Rates Per 100,000", breaks =seq(0, 21,3)) + 
+  # theme(axis.text.x = element_text(angle=90)) + 
+  theme_bw() + 
+  facet_wrap(vars(State)) + 
+  theme(legend.position = "none",
+        strip.text = element_text(size = 7, margin=margin())) 
+
 # graph of last 25 states in alphabetical order
 FM2 %>% 
-        ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + geom_point(aes(color = State), size =1/2) + labs(title = "The Relationship between Murder Rates & Public School Federal Funds", 
-        y = "Federal Funds to State Public Schools ($)") + scale_x_continuous(name = "All Murder Rates", breaks =seq(0, 21,3)) + theme(axis.text.x = element_text(angle=90)) + theme_bw() + facet_wrap(vars(State)) + theme(legend.position = "none")
+  ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + 
+  geom_point(aes(color = State), size =1/2) + 
+  labs(title = "The Relationship between Murder Rates & Public School Federal Funds", 
+        y = "Federal Funds to State Public Schools ($)") + 
+  scale_x_continuous(name = "All Murder Rates Per 100,000", breaks =seq(0, 21,3)) + 
+  # theme(axis.text.x = element_text(angle=90)) + 
+  theme_bw() + 
+  facet_wrap(vars(State)) + 
+  theme(legend.position = "none",
+        strip.text = element_text(size = 7, margin=margin()))
 ```
 The relationship between all murder rates and public school federal funds seems to have a slightly negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as California, Texas, and New York show a stronger inverse relationship between all murder rates and public school federal funds.
 
 Create a second plot graphing three variables. We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
 ```{r vis7}
-# find max murder rates
+# find max burglary rates
 summary(research_questions$All_Property_Burglary_Rates)
 # graph 3 variables: y = household median income, x = crime rate (burglary)
 BM1 <- research_questions %>% arrange(State)
