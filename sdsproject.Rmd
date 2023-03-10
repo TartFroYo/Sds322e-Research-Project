@@ -3,8 +3,8 @@ title: "Finding the Relationship between Federal Revenue for Public Schools and 
 author: "Aileen Li, Nyah Strickland"
 date: "2023-03-04"
 output: 
-  html_document: default
   pdf_document: default
+  html_document: default
 editor_options: 
   chunk_output_type: console
 ---
@@ -41,10 +41,6 @@ states_all_extended <- read_csv("states_all_extended.csv")
 state_crime <- read_csv("state_crime.csv")
 h08_1_ <- read_excel("h08 (1).xls")
 ```
-
-## Is there a relationship between Federal Funding and Crimes?
-
-## Is there a relationship between Median Household Income and Crimes?
 
 # Tidying
 For all the datasets, it is important to note we did not include Washington D.C as a state.
@@ -180,11 +176,26 @@ rqs = rqs |> mutate(Fed_Rev_Mil=Federal_Revenue/100000)
 # Compute summary stat.s
 summary(rqs$State)
 summary(rqs$Year)
-summary(rqs$Median_Income)
-summary(rqs$All_Property_Rates)
-summary(rqs$All_Property_Burglary_Rates)
 
+rqs$Median_Income = as.numeric(rqs$Median_Income)
+summary(rqs$Median_Income)
+
+rqs |> 
+  select(All_Property_Rates) |> 
+  summarize(mean=mean(All_Property_Rates))
+rqs |> 
+  select(All_Property_Burglary_Rates) |> 
+  summarize(mean=mean(All_Property_Burglary_Rates))
 ```
+
+There are 1,250 values of the State variable, which is a character vector.
+
+For Year in rqs, the earliest year is 1992 and most recent year is 2016. The median and average year is 2004.
+
+The Median_Income variable has a minimum of $20,271 and a maximum of $76,260. The mean is $44,641, and the median is $36,568.
+
+The average rate of all reported offenses of Property-related crimes per 100,000 population by state is 3,449 people per 100,000 population
+The average rate of all reported offenses of Property-related Burglaries per 100,000 population is 731.
 
 
 
@@ -196,12 +207,16 @@ summary(rqs$All_Property_Burglary_Rates)
 
 # Discussion
 
+### Is there a relationship between Federal Funding and Crimes?
 
+### Is there a relationship between Median Household Income and Crimes?
+
+### Challenges
 It was challenging to figure out how to tidy untidy data, especially since there were many special cases we had to fix. This process took us the longest to do. We learned that there's always gonna be caveats with datasets that you need to watch out for, so it is important to have an eye for detail.
 It was also tricky creating plots because we had to consider how to form them in order to answer our questions. We learned that bouncing off ideas and drawing them out is a good way to figure out which plot is best.
 
 ### Acknowledgements
-We acknowledge the following people:\
+We acknowledge the following people:\\
 __Aileen Li__, worked on:\
 -Tidying\
 -Joining/Merging\
@@ -214,8 +229,8 @@ __Nyah Strickland__, worked on:\
 -Visualizing\
 -Discussion\
 
-
-
+### References
+PASTE WEBSITES HERE
 
 
 
