@@ -29,22 +29,23 @@ And the following are the datasets we used:
 The median household income, U.S. Education, and state crime rate datasets were acquired from the U.S. Census Bureau, U.S. Census Bureau and the National Center for Education Statistics (NCES), and Unified Crime Reporting Statistics and under the collaboration of the U.S. Department of Justice and the Federal Bureau of Investigation, respectively. We joined the data sets by the state names, which are the unique rows, and year. Specifically, we looked into the years from 1992 to 2016 for both research questions. For the median household income dataset, the unique variable is the median household income (Median income) in the current dollars dataset, measuring the annual state median household incomes without considering inflation. As for the U.S. Education dataset, the unique variable is federal revenue (FEDERAL_REVENUE), and for the violent crime rate dataset, the unique variables are violent crime rate (Data.Rates.Violent.All), nonviolent crime rate (Data.Rates.Property.All), burglary crime rate (Data.Rates.Property.Burglary), and murder rate (Data.Rates.Violent.Murder). The key variables are categorical while all the unique variables are numerical. These are the eight variables required for the project. The following are the links to the datasets: 
 
 =======
-
-``` {r}
+First, we loaded the libraries and oeiginal datasets we needed.
+``` {r lib}
 library(tidyverse)
 library(readr)
 library(readxl)
 ```
 
-```{r}
+```{r dat}
 states_all_extended <- read_csv("states_all_extended.csv")
 state_crime <- read_csv("state_crime.csv")
 h08_1_ <- read_excel("h08 (1).xls")
 ```
 
 # Tidying
-For all the datasets, it is important to note we did not include Washington D.C as a state.
+We then started tidying our datasets. For all the datasets, it is important to note we did not include Washington D.C as a state.
 
+DESCRIBE
 ```{r edu}
 # Only keep key and unique variables for each dataset 
 
@@ -57,6 +58,7 @@ us_education <- states_all_extended %>%
   mutate(State = str_replace(State, "_", " "))
 ```
 
+DESCRIBE
 ```{r cri}
 # Rename crime variable names so they don't have the word 'Data' in it
 crime_rate <- state_crime %>% 
@@ -78,8 +80,7 @@ crime_rate$State <- toupper(crime_rate$State)
 ```
 
 The median_housing_income dataset is untidy and contains unnecessary info in relation to what we wanted to analyze, so we modified it for our questions.  
-We changed the column names in the dataset to be named in sequential order. Then, we deleted all the columns containing standard error data.
-
+We changed the column names in the dataset to be named in sequential order. Then, we deleted all the columns containing standard error data, which was every other column starting at the second column.
 ```{r mhi1}
 # Find standard error columns and delete them
 med_income_base = h08_1_
@@ -96,7 +97,6 @@ med_income_base = med_income_base[,!names(med_income_base) %in% del_col]
 
 We renamed the columns to their respective titles given in the dataset on the fourth row. And then deleted rows containing unimportant information. 
 There were two columns containing different info for the year 2013. We tried to find why they were different, in addition as to what the values in the parentheses meant, but there was no documentation for this dataset. Thus, we decided to keep the first column instance of the year 2013 so that we would have no differing data for the same year and state combination that could possibly affect our graphs.
-
 ```{r mhi2}
 # Rename columns
 colnames(med_income_base) = med_income_base[4,]
@@ -108,8 +108,7 @@ i = min(which(med_income_base$State=='Wyoming'))
 med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
 ```
 
-We made the median_housing_income dataset tidy by changing the individual year columns to be under the Year variable and their values under column Median_Income. Then, we filtered for observations within our desired time period, which is from 1992 to 2016 and arranged them in ascending order.
-
+We made the median_housing_income dataset tidy by changing the individual year columns to be under the Year variable and their values under Median_Income. Then, we filtered for observations within our desired time period, which is from 1992 to 2016, and arranged them in ascending order.
 ```{r mhi3}
 # Make desired data tidy
 med_income_tidy = med_income_untidy |> 
@@ -120,7 +119,6 @@ med_income_tidy$State = toupper(med_income_tidy$State)
 
 We found years with values in parentheses and checked for duplicate years for the same state.
 We also removed the values in parentheses for the rest of the years. And for the sake of merging the datasets easier, we completely capitalized the state names.
-
 ```{r mhi4}
 # Find years with () and duplicate years other than 2013
 pyears = med_income_tidy[grep(")$",med_income_tidy$Year),]
@@ -136,6 +134,7 @@ med_income = med_income_tidy
 
 # Joining/Merging
 
+We found the number of rows and columns in each other datasets before merging.
 ```{r num}
 # Note how many observations are in each data set
 nrow(us_education)
@@ -148,6 +147,7 @@ ncol(med_income)
 
 There are 1,682 observations and 1 unique variable (Federal_Revenue) in the us_education dataset, 3,055 observations in the state_crime dataset observations and 4 unique variables (All_Property_Rates, All_Property_Burglary_Rates, All_Violent_Rates, All_Murder_Rates), and 1,250 observations and 1 unique variable (Median_Income). 
 
+We first joined the us_education and crime_rate and then joined their merged result to med_income.
 ```{r ljoin}
 # Left join state_crime to us_education by key variable Year and State
 rqs <- left_join(us_education,crime_rate, by = c("Year", "State")) %>%
@@ -202,11 +202,13 @@ The Median_Income variable has a minimum of $20,271 and a maximum of $76,260. Th
 The average rate of all reported offenses of Property-related crimes per 100,000 population by state is 3,449 people per 100,000 population
 The average rate of all reported offenses of Property-related Burglaries per 100,000 population is 731.
 
+WRITE
 
 
 =======
 
 # Visualizing
+DESCRIBE
 ```{r vis1}
 # find max violent crime rate
 max(crime_rate$All_Violent_Rates)
@@ -216,6 +218,7 @@ crime_rate %>% ggplot(aes(x= All_Violent_Rates)) + geom_histogram(bin=10, color 
 
 The U.S. state distribution of all violent crimes is right-skewed with the peak being around 300 reported offenses per 100,000 population. Generally, violent crime rates between 150 and 450 reported offenses per 100000 population are common statewide.
 
+DESCRIBE
 ```{r vis2}
 # plot U.S. federal funding to state public schools
 # find max federal funds to state public schools using summary
@@ -226,6 +229,7 @@ us_education %>% ggplot(aes(x=Federal_Revenue)) + geom_histogram(bins=30, color 
 
 The distribution of federal funds to state public schools is strongly skewed to the right. 
 
+DESCRIBE
 ```{r vis3}
 # Graph 2 variables: x = year, y = federal funds to state schools
 # Create a scatterplot tracking each state's public school federal funding over time 
@@ -239,6 +243,7 @@ research_questions %>%
 
 The distribution of federal funds to state public schools over 1992-2016 generally increases. Though the funds decrease between 2010 and 2012 and increase again after that time period. This decrease in funds during 2010-2012 is likely due to the consequences of the government overspending following the U.S. 2008 recession.
 
+DESCRIBE
 ```{r vis4}
  # Graph 2 variables: x = year, y = median household income
 # Create a scatterplot tracking each state's median household income over time
@@ -251,6 +256,7 @@ med_income %>% ggplot(aes(x = Year, y = Median_Income)) + geom_point(aes(color =
 
 The distribution of U.S. state median household income over 1992-2016 has a generally positive upward slope.
 
+DESCRIBE
 ```{r vis5}
 # find max murder rates
 summary(research_questions$All_Murder_Rates)
@@ -261,6 +267,7 @@ FM2 <- research_questions %>% arrange(State)
 FM2 <- FM2[626:1250,]
 ```
 
+DESCRIBE
 ```{r vis6}
 # graph of first 25 states in alphabetical order
 FM1 %>% 
@@ -274,6 +281,7 @@ FM2 %>%
 
 The relationship between all murder rates and public school federal funds seems to have a slightly negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as California, Texas, and New York show a stronger inverse relationship between all murder rates and public school federal funds.
 
+DESCRIBE
 ```{r vis7}
 # find max murder rates
 summary(research_questions$All_Property_Burglary_Rates)
@@ -284,6 +292,7 @@ BM2 <- research_questions %>% arrange(State)
 BM2 <- BM2[626:1250,]
 ```
 
+DESCRIBE
 ```{r vis8}
 # graph of first 25 states in alphabetical order
 BM1 %>% 
