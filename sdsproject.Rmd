@@ -205,8 +205,12 @@ rqs %>% filter(Year==2002) |>
   geom_histogram(bins=30, color ="darkblue", fill = "lightblue") + 
   labs(title = "Distribution of Federal Funds to State Public Schools in 2002", 
        y = "Frequency") +
+<<<<<<< HEAD
   scale_x_continuous(name = "U.S. Federal Funding to State Public Schools by Hundred Thousand Dollars in 2002") +
   # theme(axis.text.x = element_text(angle=90)) + 
+=======
+  scale_x_continuous(name = "U.S. Federal Funding to State Public Schools by Hundred Thousands in 2002") +
+>>>>>>> 81ac65d438d32aca699bb28ba986606f93755fe8
   theme_bw()
 
 ```
@@ -272,7 +276,7 @@ FM2 <- FM2[626:1250,]
 # graph of first 25 states in alphabetical order
 FM1 %>% ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + 
   geom_point(aes(color = State), size =1/2) + 
-  labs(title = "The Relationship between All Murder Rates & Public School Federal Funds", 
+  labs(title = "Relationship between Murder Rates & Public School Federal Funds", 
         y = "Federal Funds to State Public Schools ($)") + 
   scale_x_continuous(name = "All Murder Rates Per 100,000", breaks =seq(0, 21,3)) + 
   # theme(axis.text.x = element_text(angle=90)) + 
@@ -282,7 +286,7 @@ FM1 %>% ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) +
 # graph of last 25 states in alphabetical order
 FM2 %>% ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + 
   geom_point(aes(color = State), size =1/2) + 
-  labs(title = "The Relationship between Murder Rates & Public School Federal Funds", 
+  labs(title = "Relationship between Murder Rates & Public School Federal Funds", 
         y = "Federal Funds to State Public Schools ($)") + 
   scale_x_continuous(name = "All Murder Rates Per 100,000", breaks =seq(0, 21,3)) + 
   # theme(axis.text.x = element_text(angle=90)) + 
@@ -307,7 +311,7 @@ BM2 <- BM2[626:1250,]
 # graph of first 25 states in alphabetical order
 BM1 %>% ggplot(aes(x = All_Property_Burglary_Rates, y = Median_Income)) + 
   geom_point(aes(color = State), size =1/2) + 
-  labs(title = "The Relationship between Burglary Rates & State Household Median Income", 
+  labs(title = "Relationship between Burglary Rates & State Household Median Income", 
        y = "State Median Household Income ($)") +
   scale_x_continuous(name = "All Property Burglary Rates Per 100,000",
                      breaks =seq(0, 1890,400)) + 
@@ -318,7 +322,7 @@ BM1 %>% ggplot(aes(x = All_Property_Burglary_Rates, y = Median_Income)) +
 # graph of last 25 states in alphabetical order
 BM2 %>% ggplot(aes(x = All_Property_Burglary_Rates,y = Median_Income)) + 
   geom_point(aes(color = State), size =1/2) + 
-  labs(title = "The Relationship between Burglary Rates & State Household Median Income", 
+  labs(title = "Relationship between Burglary Rates & State Household Median Income", 
        y = "State Median Household Income ($)") +
   scale_x_continuous(name = "All Property Burglary Rates Per 100,000",
                      breaks =seq(0, 1890,400)) + 
@@ -332,8 +336,9 @@ The relationship between all property burglary rates and state household median 
 
 # Discussion
 ### Is there a relationship between Federal Funding and Crimes?
-
+Overall, the relationship between all murder rates and public school federal funding is slightly negative. There was not a general trend to be distinguished from the scatterplot (vis5). Although there is stronger inverse relationship seen in California, Texas, New York, and Floria. This pattern is likely more apparent due to these states have a larger population than the other states. Yet, there could be other confounding factors that are influencing this trend. We conclude that public school federal funding does not have a large effect on murder rates across states. 
 ### Is there a relationship between Median Household Income and Crimes?
+Unlike the relationship between all murder rates and public school federal funding, the scatterplots (vis6) relationship between state median household income and burglary rates has a strong inverse relationship. A possible explanation for this could be due to the fact that having a higher household median income allows people to afford security appliances such as house cameras along with living in affluent neighborhoods where crime is relatively low. There could be other influences for this trend. Though, since every state has negative relationship, we conclude that there is a relationship between median household income and crimes.
 
 ### Challenges
 It was challenging to figure out how to tidy untidy data, especially since there were many special cases we had to fix. This process took us the longest to do. We learned that there's always gonna be caveats with datasets that you need to watch out for, so it is important to have an eye for detail.
