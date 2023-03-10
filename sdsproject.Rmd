@@ -13,6 +13,7 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# Introduction
   Many U.S. states have made changes to public school funding. One of our research questions is if there is a relationship between change in federal revenue for public schools and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship, depending on what kind, states can make changes in their budget for the betterment of their enrolled students. We expected the more funding for public schools, the less violent crimes there are by state.
   
   As inflation increases annually, household incomes must also rise to adjust for standard of living in each state. Our second research question is if there is a relationship between median household income and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship between these two datasets, then state governments should make changes in their policies to help states where households are most affected. We expect the greater the median household income, the less violent crimes there are by state. The following are the research questions we investigated:
@@ -41,7 +42,7 @@ h08_1_ <- read_excel("h08 (1).xls")
 # Tidying
 We then started tidying our datasets. For all the datasets, it is important to note we did not include Washington D.C as a state.
 
-DESCRIBE
+The dataset was already tidy, so we selected the data we were interested and named it under us_education. We also renamed the columns for convenience later.
 ```{r edu}
 # Only keep key and unique variables for each dataset 
 # Rename dataset to us_education
@@ -52,7 +53,7 @@ us_education <- states_all_extended %>%
 # Make sure state names are identical in both datasets
   mutate(State = str_replace(State, "_", " "))
 ```
-DESCRIBE
+This dataset was also organized, so we selected the variables we desired, renamed them, and created a dataset called crime_rate, arranged by year. We also completely capitalized the states, which was one of our keys.
 ```{r cri}
 # Rename crime variable names so they don't have the word 'Data' in it
 crime_rate <- state_crime %>% 
@@ -71,8 +72,7 @@ crime_rate <- state_crime %>%
 # Make state names be uppercase to make merging the datasets easier
 crime_rate$State <- toupper(crime_rate$State)
 ```
-The median_housing_income dataset is untidy and contains unnecessary info in relation to what we wanted to analyze, so we modified it for our questions.  
-We changed the column names in the dataset to be named in sequential order. Then, we deleted all the columns containing standard error data, which was every other column starting at the second column.
+The median_housing_income dataset is untidy and contains unnecessary info in relation to what we wanted to analyze, so we modified it for our questions. We changed the column names in the dataset to be named in sequential order. Then, we deleted all the columns containing standard error data, which was every other column starting at the second column.
 ```{r mhi1}
 # Find standard error columns and delete them
 med_income_base = h08_1_
@@ -103,8 +103,7 @@ med_income_tidy = med_income_untidy |>
   filter(substr(Year, 1, 4) %in% (1992:2016)) |> arrange(Year)
 med_income_tidy$State = toupper(med_income_tidy$State)
 ```
-We found years with values in parentheses and checked for duplicate years for the same state.
-We also removed the values in parentheses for the rest of the years. And for the sake of merging the datasets easier, we completely capitalized the state names.
+We found years with values in parentheses and checked for duplicate years for the same state. We also removed the values in parentheses for the rest of the years. And for the sake of merging the datasets easier, we completely capitalized the state names.
 ```{r mhi4}
 # Find years with () and duplicate years other than 2013
 pyears = med_income_tidy[grep(")$",med_income_tidy$Year),]
@@ -141,9 +140,10 @@ rqs = left_join(rqs, med_income, by = c("Year", "State"))
 # Filter missing values of federal revenue 
 nrow(rqs)
 ```
-Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these 2 datasets into a single dataset rqs, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted, and it is the reason we left join crime_rate to us_education rather than the other way around. After joining the med_income to the previously joined dataset, we still have 1,250 obervations but with more columns because the process added the unique columns from med_income to the observations with matching state and year in the latter, which was all of them.
+Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these 2 datasets into a single dataset rqs, there are 1,682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted, and it is the reason we left join crime_rate to us_education rather than the other way around. After joining the med_income to the previously joined dataset, we still have 1,250 obervations but with more columns because the process added the unique columns from med_income to the observations with matching state and year in the latter, which was all of them.
 
 There are 1,250 observations in the rqs dataset. This means that from the total number of overlapped observations (being 3055-1682=1373) in both us_education and state_crime datasets, there were 1373-1250=123 observations that had missing values. Since the crime_rate was left joined to us_education, the missing values likely arose from not matching with the year and state name for Federal_Revenue as this variable records state public school federal funding from 1992-2016.
+
 # Wrangling
 We created a new variable called Fed_Rev, which is calculated by dividing the Federal_Revenue by 100,000.
 ```{r mut}
@@ -174,11 +174,12 @@ rqs |> select(All_Property_Burglary_Rates) |>
   summarize(mean=mean(All_Property_Burglary_Rates))
 summary(rqs$All_Property_Burglary_Rates)
 ```
-The average rate of all reported offenses of Property-related Burglaries per 100,000 population is 731. The minimum and maximum rates are 201.7 per 100,000 and 1888.8 per 100,000. Considering the mean rate is low, this means that many of the rate are on the smaller side and that the there are few rates that have a value equal to the maximum.
+The average rate of all reported offenses of Property-related Burglaries per 100,000 population is 731. The minimum and maximum rates are 201.7 per 100,000 and 1,888.8 per 100,000. Considering the mean rate is low, this means that many of the rate are on the smaller side and that the there are few rates that have a value equal to the maximum.
+
 # Visualizing
 ### 1 Variable Plots
 We created plots graphing one variable each.\
-__Figure 1__ plots All_Violent_Rates
+__Figure 1__ plots All_Violent_Rates in 2002.
 ```{r vis1}
 # find max violent crime rate
 max(crime_rate$All_Violent_Rates)
@@ -193,7 +194,7 @@ crime_rate |> filter(Year==2002) |>
 ```
 The U.S. state distribution of all violent crimes in 2002 seems to be right-skewed with the peak being around 300 reported offenses per 100,000 population. Most states in 2002 had all violent crime rates between 200 and 500.
 
-__Figure 2__ plots Fed_Rev.
+__Figure 2__ plots Fed_Rev in 2002.
 ```{r vis2}
 # plot U.S. federal funding to state public schools
 # find max federal funds to state public schools using summary
@@ -205,16 +206,18 @@ rqs %>% filter(Year==2002) |>
   geom_histogram(bins=30, color ="darkblue", fill = "lightblue") + 
   labs(title = "Distribution of Federal Funds to State Public Schools in 2002", 
        y = "Frequency") +
-  scale_x_continuous(name = "U.S. Federal Funding to State Public Schools by Hundred Thousand Dollars in 2002") +
+  scale_x_continuous(
+    name = "U.S. Federal Funding to State Public Schools by Hundred Thousand Dollars in 2002") +
   # theme(axis.text.x = element_text(angle=90)) + 
-  scale_x_continuous(name = "U.S. Federal Funding to State Public Schools by Hundred Thousands in 2002") +
+  scale_x_continuous(
+    name = "U.S. Federal Funding to State Public Schools by Hundred Thousands in 2002") +
   theme_bw()
-
 ```
 The distribution of federal funds to state public schools in 2002 is strongly skewed to the right. This shows that a lot of state public schools received federal funds under $1,000,000. There is one state, however, that received around $5,000,000.
+
 ### 2 Variable Plots
 We created plots graphing two variables each.\
-__Figure 3__ plots Year and Federal_Revenue
+__Figure 3__ plots Year and Federal_Revenue.
 ```{r vis3}
 # Graph 2 variables: x = year, y = federal funds to state schools
 # Create a scatterplot tracking each state's public school federal funding over time 
@@ -230,7 +233,7 @@ rqs %>% ggplot(aes(x = Year, y = Federal_Revenue)) +
   theme(legend.key.height= unit(5, 'mm'),
         legend.key.width= unit(5, 'mm'),
         legend.title = element_text(size=10),
-        legend.text = element_text(size=7)) +
+        legend.text = element_text(size=5)) +
   # theme(legend.position = "none") + 
   geom_smooth(method = "lm", color = "black")
 ```
@@ -258,9 +261,10 @@ rqs %>% ggplot(aes(x = Year, y = mi)) +
   # theme(legend.position = "none")
 ```
 The distribution of U.S. state median household income over 1992-2016 has a generally positive upward slope. This shows that as time goes on, state median household income also increases.
+
 ### 3 Variable Plots
 We created plots graphing three variables. We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.\
-__Figure 5__ plots All_Murder_Rates, Federal_Revenue, and State.
+__Figure 5__ plots All_Murder_Rates and Federal_Revenue by State.
 ```{r vis5}
 # find max murder rates
 summary(rqs$All_Murder_Rates)
@@ -290,9 +294,9 @@ FM2 %>% ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) +
   theme_bw() + facet_wrap(vars(State)) + 
   theme(legend.position = "none", strip.text = element_text(size = 7, margin=margin()))
 ```
-The relationship between all murder rates and public school federal funds seems to have a slightly negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as California, Texas, and New York show a stronger inverse relationship between all murder rates and public school federal funds.
+The relationship between all murder rates and public school federal funds seems to have a slightly negative relationship. Though the relationship seems likely to be non-existent, a few outliers such as California, Texas, and New York show a stronger inverse relationship between all murder rates and public school federal funds.
 
-__Figure 6__ plots All_Property_Burglary_Rates, Median_Income, and State.
+__Figure 6__ plots All_Property_Burglary_Rates and Median_Income by State.
 ```{r vis6}
 # find max burglary rates
 summary(rqs$All_Property_Burglary_Rates)
@@ -333,25 +337,23 @@ The relationship between all property burglary rates and state household median 
 
 # Discussion
 ### Is there a relationship between Federal Funding and Crimes?
-Overall, the relationship between all murder rates and public school federal funding is slightly negative. There was not a general trend to be distinguished from the scatterplot (vis5). Although there is stronger inverse relationship seen in California, Texas, New York, and Floria. This pattern is likely more apparent due to these states have a larger population than the other states. Yet, there could be other confounding factors that are influencing this trend. We conclude that public school federal funding does not have a large effect on murder rates across states. 
+Overall, the relationship between all murder rates and public school federal funding is slightly negative. There was not a general trend to be distinguished from the scatterplot (Fig.5). Although there is stronger inverse relationship seen in California, Texas, New York, and Floria, this pattern is likely more apparent due to these states having a larger population than the other states. Yet, there could be other confounding factors that are influencing this trend. We conclude that public school federal funding does not have a large effect on murder rates across states. 
 
 ### Is there a relationship between Median Household Income and Crimes?
-Unlike the relationship between all murder rates and public school federal funding, the scatterplots (vis6) relationship between state median household income and burglary rates has a strong inverse relationship. A possible explanation for this could be due to the fact that having a higher household median income allows people to afford security appliances such as house cameras along with living in affluent neighborhoods where crime is relatively low. There could be other influences for this trend. Though, since every state has negative relationship, we conclude that there is a relationship between median household income and crimes.
+Unlike the relationship between all murder rates and public school federal funding, the scatterplots (Fig.6) relationship between state median household income and burglary rates has a strong inverse relationship. A possible explanation for this could be due to the fact that having a higher household median income allows people to afford security appliances such as house cameras along with living in affluent neighborhoods where crime is relatively low. There could be other influences for this trend. But, since every state has negative relationship, we conclude that there is a relationship between median household income and crimes.
 
 ### Challenges
 It was challenging to figure out how to tidy untidy data, especially since there were many special cases we had to fix. This process took us the longest to do. We learned that there's always gonna be caveats with datasets that you need to watch out for, so it is important to have an eye for detail.
-It was also tricky creating plots because we had to consider how to form them in order to answer our questions. We learned that bouncing off ideas and drawing them out is a good way to figure out which plot is best.
-### Acknowledgements
-__Aileen Li__, worked on:\
+It was also tricky creating plots because we had to consider how to form them in order to answer our questions. We learned that bouncing off ideas with each other, drawing them out, and googling is a good way to figure out which plot is best.
+
+# Acknowledgements
+__Aileen Li & Nyah Strickland__, worked on:\
 -Tidying\
 -Joining/Merging\
 -Wrangling\
--Discussion\
-__Nyah Strickland__, worked on:\
--Tidying\
--Joining/Merging\
 -Visualizing\
--Discussion\
+-Discussion
+
 # References
 Click the names to go to the link of where we got our datasets:\
 -[Median Household Income by State](https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h08.xls)\
