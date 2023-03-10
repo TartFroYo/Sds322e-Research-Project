@@ -73,7 +73,6 @@ crime_rate$State <- toupper(crime_rate$State)
 ```
 
 The median_housing_income dataset is untidy and contains unnecessary info in relation to what we wanted to analyze, so we modified it for our questions.  
-
 We changed the column names in the dataset to be named in sequential order. Then, we deleted all the columns containing standard error data.
 
 ```{r tidy}
@@ -91,7 +90,7 @@ med_income_base = med_income_base[,!names(med_income_base) %in% del_col]
 ```
 
 We renamed the columns to their respective titles given in the dataset on the fourth row. And then deleted rows containing unimportant information. 
-There were two columns containing different info for the year 2013. We tried to find why they were different, in addition as to what the values in the parentheses meant, but there was no documentation for this dataset. Thus, we decided to keep the first column instance of the year 2013 so that we could have no differing data for the same year and state combination that could possibly affect our graphs.
+There were two columns containing different info for the year 2013. We tried to find why they were different, in addition as to what the values in the parentheses meant, but there was no documentation for this dataset. Thus, we decided to keep the first column instance of the year 2013 so that we would have no differing data for the same year and state combination that could possibly affect our graphs.
 
 ```{r tidy}
 # rename columns
@@ -104,7 +103,7 @@ i = min(which(med_income_base$State=='Wyoming'))
 med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
 ```
 
-We made the median_housing_income dataset tidy by changing the individual year columns to be under the Year variable and their values under column Median_Income. Then, we filtered for observations within our desired time period, which is from 1992 to 2016.
+We made the median_housing_income dataset tidy by changing the individual year columns to be under the Year variable and their values under column Median_Income. Then, we filtered for observations within our desired time period, which is from 1992 to 2016 and arranged them in ascending order.
 
 ```{r tidy}
 # make desired data tidy
@@ -114,7 +113,7 @@ med_income_tidy = med_income_untidy |>
 med_income_tidy$State = toupper(med_income_tidy$State)
 ```
 
-We checked for years with some values in parentheses and for duplicate years for the same state.
+We found years with values in parentheses and checked for duplicate years for the same state.
 We also removed the values in parentheses for the rest of the years. And for the sake of merging the datasets easier, we completely capitalized the state names.
 
 ```{r tidy}
