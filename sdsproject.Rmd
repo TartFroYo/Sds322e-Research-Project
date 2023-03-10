@@ -31,8 +31,7 @@ First, we loaded the libraries and oeiginal datasets we needed.
 library(tidyverse)
 library(readr)
 library(readxl)
-```
-```{r dat, message=FALSE}
+
 states_all_extended <- read_csv("states_all_extended.csv")
 state_crime <- read_csv("state_crime.csv")
 h08_1_ <- read_excel("h08 (1).xls")
@@ -44,8 +43,7 @@ We then started tidying our datasets. For all the datasets, it is important to n
 DESCRIBE
 ```{r edu}
 # Only keep key and unique variables for each dataset 
-
-# Eename dataset to us_education
+# Rename dataset to us_education
 us_education <- states_all_extended %>% 
   select('STATE', 'YEAR', 'FEDERAL_REVENUE') %>% 
   filter(!str_detect(STATE, "^DISTRICT")) %>%
@@ -64,12 +62,11 @@ crime_rate <- state_crime %>%
        'Data.Rates.Property.All', 
        'Data.Rates.Property.Burglary', 
        'Data.Rates.Violent.Murder') %>% filter(!str_detect(State, "^District")) %>%   
-  rename("All_Property_Rates" = "Data.Rates.Property.All", 
+  rename("All_Property_Rates" = "Data.Rates.Property.All",
          "All_Property_Burglary_Rates" = "Data.Rates.Property.Burglary", 
          "All_Violent_Rates" = "Data.Rates.Violent.All", 
          "All_Murder_Rates" = "Data.Rates.Violent.Murder") %>% 
-  
-#put year in ascending order so it is easy to merge this    dataset with us_education 
+# Put year in ascending order so it is easy to merge this dataset with us_education 
   arrange(Year)
 # Make state names be uppercase to make merging the datasets easier
 crime_rate$State <- toupper(crime_rate$State)
@@ -82,7 +79,6 @@ We changed the column names in the dataset to be named in sequential order. Then
 med_income_base = h08_1_
 colnames(med_income_base) = paste(seq_along(med_income_base))
 del_col = list()
-
 for (col in 1:ncol(h08_1_)) {
   if (col!=1 & (col-1)%%2==0) {
     del_col= append(del_col, as.character(col))
@@ -99,7 +95,6 @@ colnames(med_income_base) = med_income_base[4,]
 
 # Remove undesired data
 med_income_base = med_income_base[-(1:6),-9]
-
 i = min(which(med_income_base$State=='Wyoming'))
 med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
 ```
@@ -150,7 +145,6 @@ rqs <- left_join(us_education,crime_rate, by = c("Year", "State")) %>%
 # Left join med_income to prev. joined dataset by same key var.s
 med_income$Year = as.numeric(med_income$Year)
 rqs = left_join(rqs, med_income, by = c("Year", "State"))
- 
 # Filter missing values of federal revenue 
 nrow(rqs)
 ```
@@ -181,16 +175,14 @@ summary(rqs$Median_Income)
 The Median_Income variable has a minimum of $20,271 and a maximum of $76,260. The mean is $44,641, and the median is $36,568.
 
 ```{r sss3}
-rqs |> 
-  select(All_Property_Rates) |> 
+rqs |> select(All_Property_Rates) |> 
   summarize(mean=mean(All_Property_Rates))
 summary(rqs$All_Property_Rates)
 ```
 The average rate of all reported offenses of Property-related crimes per 100,000 population by state is 3,449 people per 100,000 population. The minimum and maximum rates are 1,407 per 100,000 and 7,500 per 100,000, respectively.
 
 ```{r sss4}
-rqs |> 
-  select(All_Property_Burglary_Rates) |> 
+rqs |> select(All_Property_Burglary_Rates) |> 
   summarize(mean=mean(All_Property_Burglary_Rates))
 summary(rqs$All_Property_Burglary_Rates)
 ```
@@ -205,13 +197,11 @@ __Figure 1__ Figure 1 plots All_Violent_Rates
 max(crime_rate$All_Violent_Rates)
 
 # plot a histogram of all violent crime rates across the states
-crime_rate |> 
-  filter(Year==2002) |>
+crime_rate |> filter(Year==2002) |>
   ggplot(aes(x= All_Violent_Rates)) + 
   geom_histogram(bins=10, color ="darkred", fill = "red") + 
-  labs(title = "U.S. State Distribution of All Violent Crime Rates in 2002 ", 
-       y = "Frequency") + 
-  scale_x_continuous(name = "All Violent Crime Rates per 100,000 in 2002", breaks =seq(0, 1245,150)) + 
+  labs(title = "U.S. State Distribution of All Violent Crime Rates in 2002 ",y="Frequency") + 
+  scale_x_continuous(name = "All Violent Crime Rates per 100,000 in 2002", breaks=seq(0, 1245,150)) + 
   theme_bw()
 
 ```
@@ -224,8 +214,7 @@ __Figure 2__ Figure 2 plots Fed_Rev.
 summary(us_education$Federal_Revenue)
 
 # plot a histogram of U.S. federal funding to state public schools
-rqs %>% 
-  filter(Year==2002) |>
+rqs %>% filter(Year==2002) |>
   ggplot(aes(x=Fed_Rev)) + 
   geom_histogram(bins=30, color ="darkblue", fill = "lightblue") + 
   labs(title = "Distribution of Federal Funds to State Public Schools in 2002", 
@@ -243,8 +232,7 @@ __Figure 3__ Figure 3 plots Year and Federal_Revenue
 ```{r vis3}
 # Graph 2 variables: x = year, y = federal funds to state schools
 # Create a scatterplot tracking each state's public school federal funding over time 
-rqs %>% 
-  ggplot(aes(x = Year, y = Federal_Revenue)) + 
+rqs %>% ggplot(aes(x = Year, y = Federal_Revenue)) + 
   geom_point(aes(color = State), size =1/2) + 
   labs(title = "Federal Funds to State Public Schools Over Time", 
        y = "Federal Funds to State Public Schools ($)") + 
@@ -268,8 +256,7 @@ __Figure 4__ Figure 4 plots Year and mi, which is a function of Median_Income.
 # Create a plot tracking each state's median household income over time
 rqs = rqs |> mutate(mi=Median_Income/1000)
 
-rqs %>% 
-  ggplot(aes(x = Year, y = mi)) + 
+rqs %>% ggplot(aes(x = Year, y = mi)) + 
   geom_point(aes(color = State), size =1/2) + 
   labs(title = "U.S. State Median Household Income Over Time") + 
   scale_y_continuous(name="U.S. State Median Household Income ($)", breaks=seq(0, 100, 10)) + 
@@ -283,7 +270,6 @@ rqs %>%
         legend.title = element_text(size=10),
         legend.text = element_text(size=5))
   # theme(legend.position = "none")
-
 ```
 The distribution of U.S. state median household income over 1992-2016 has a generally positive upward slope. This shows that as time goes on, state median household income also increases.
 
@@ -300,30 +286,24 @@ FM2 <- rqs %>% arrange(State)
 FM2 <- FM2[626:1250,]
 
 # graph of first 25 states in alphabetical order
-FM1 %>% 
-  ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + 
+FM1 %>% ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + 
   geom_point(aes(color = State), size =1/2) + 
   labs(title = "The Relationship between All Murder Rates & Public School Federal Funds", 
         y = "Federal Funds to State Public Schools ($)") + 
   scale_x_continuous(name = "All Murder Rates Per 100,000", breaks =seq(0, 21,3)) + 
   # theme(axis.text.x = element_text(angle=90)) + 
-  theme_bw() + 
-  facet_wrap(vars(State)) + 
-  theme(legend.position = "none",
-        strip.text = element_text(size = 7, margin=margin())) 
+  theme_bw() + facet_wrap(vars(State)) + 
+  theme(legend.position = "none", strip.text = element_text(size = 7, margin=margin())) 
 
 # graph of last 25 states in alphabetical order
-FM2 %>% 
-  ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + 
+FM2 %>% ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + 
   geom_point(aes(color = State), size =1/2) + 
   labs(title = "The Relationship between Murder Rates & Public School Federal Funds", 
         y = "Federal Funds to State Public Schools ($)") + 
   scale_x_continuous(name = "All Murder Rates Per 100,000", breaks =seq(0, 21,3)) + 
   # theme(axis.text.x = element_text(angle=90)) + 
-  theme_bw() + 
-  facet_wrap(vars(State)) + 
-  theme(legend.position = "none",
-        strip.text = element_text(size = 7, margin=margin()))
+  theme_bw() + facet_wrap(vars(State)) + 
+  theme(legend.position = "none", strip.text = element_text(size = 7, margin=margin()))
 ```
 The relationship between all murder rates and public school federal funds seems to have a slightly negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as California, Texas, and New York show a stronger inverse relationship between all murder rates and public school federal funds.
 
@@ -331,7 +311,6 @@ __Figure 6__ Figure 6 plots All_Property_Burglary_Rates, Median_Income, and Stat
 ```{r vis6}
 # find max burglary rates
 summary(rqs$All_Property_Burglary_Rates)
-
 # find max murder rates
 summary(rqs$All_Property_Burglary_Rates)
 
@@ -342,34 +321,26 @@ BM2 <- rqs %>% arrange(State)
 BM2 <- BM2[626:1250,]
 
 # graph of first 25 states in alphabetical order
-BM1 %>% 
-        ggplot(aes(x = All_Property_Burglary_Rates, 
-                   y = Median_Income)) + 
+BM1 %>% ggplot(aes(x = All_Property_Burglary_Rates, y = Median_Income)) + 
   geom_point(aes(color = State), size =1/2) + 
   labs(title = "The Relationship between Burglary Rates & State Household Median Income", 
        y = "State Median Household Income ($)") +
   scale_x_continuous(name = "All Property Burglary Rates Per 100,000",
                      breaks =seq(0, 1890,400)) + 
   # theme(axis.text.x = element_text(angle=90)) + 
-  theme_bw() + 
-  facet_wrap(vars(State)) + 
-  theme(legend.position = "none",
-        strip.text = element_text(size = 7, margin=margin()))
+  theme_bw() + facet_wrap(vars(State)) + 
+  theme(legend.position = "none", strip.text = element_text(size = 7, margin=margin()))
 
 # graph of last 25 states in alphabetical order
-BM2 %>% 
-        ggplot(aes(x = All_Property_Burglary_Rates, 
-                   y = Median_Income)) + 
+BM2 %>% ggplot(aes(x = All_Property_Burglary_Rates,y = Median_Income)) + 
   geom_point(aes(color = State), size =1/2) + 
   labs(title = "The Relationship between Burglary Rates & State Household Median Income", 
        y = "State Median Household Income ($)") +
   scale_x_continuous(name = "All Property Burglary Rates Per 100,000",
                      breaks =seq(0, 1890,400)) + 
   # theme(axis.text.x = element_text(angle=90)) + 
-  theme_bw() + 
-  facet_wrap(vars(State)) + 
-  theme(legend.position = "none",
-        strip.text = element_text(size = 7, margin=margin()))
+  theme_bw() + facet_wrap(vars(State)) + 
+  theme(legend.position = "none",strip.text = element_text(size = 7, margin=margin()))
 ```
 The relationship between all property burglary rates and state household median incomes seems to have a strong negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as Arkansas, Kentucky, and Mississippi show a weaker inverse relationship between all property burglary rates and state household median incomes.
 
