@@ -110,7 +110,7 @@ We made the median_housing_income dataset tidy by changing the individual year c
 # make desired data tidy
 med_income_tidy = med_income_untidy |> 
   pivot_longer(!State, names_to="Year", values_to="Median_Income") |> 
-  filter(substr(Year, 1, 4) %in% (1992:2016))
+  filter(substr(Year, 1, 4) %in% (1992:2016)) |> arrange(Year)
 med_income_tidy$State = toupper(med_income_tidy$State)
 ```
 
