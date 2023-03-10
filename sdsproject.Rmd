@@ -254,7 +254,7 @@ med_income %>% ggplot(aes(x = Year, y = Median_Income)) + geom_point(aes(color =
 ```
 The distribution of U.S. state median household income over 1992-2016 has a generally positive upward slope. This shows that as time goes on, state median household income also increases.
 
-Create a plot graphing three variables.
+Create a plot graphing three variables. We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
 ```{r vis5}
 # find max murder rates
 summary(research_questions$All_Murder_Rates)
@@ -264,8 +264,6 @@ FM1 <- FM1[1:625,]
 FM2 <- research_questions %>% arrange(State)
 FM2 <- FM2[626:1250,]
 ```
-We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
-
 
 ```{r vis6}
 # graph of first 25 states in alphabetical order
@@ -279,7 +277,7 @@ FM2 %>%
 ```
 The relationship between all murder rates and public school federal funds seems to have a slightly negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as California, Texas, and New York show a stronger inverse relationship between all murder rates and public school federal funds.
 
-Create a second plot graphing three variables.
+Create a second plot graphing three variables. We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
 ```{r vis7}
 # find max murder rates
 summary(research_questions$All_Property_Burglary_Rates)
@@ -289,7 +287,6 @@ BM1 <- BM1[1:625,]
 BM2 <- research_questions %>% arrange(State)
 BM2 <- BM2[626:1250,]
 ```
-We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
 
 DESCRIBE
 ```{r vis8}
