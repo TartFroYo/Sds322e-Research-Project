@@ -209,7 +209,7 @@ WRITE
 =======
 
 # Visualizing
-Create a second plot graphing one variable.
+Create a plot graphing one variable.
 ```{r vis1}
 # find max violent crime rate
 max(crime_rate$All_Violent_Rates)
