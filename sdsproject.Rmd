@@ -47,9 +47,11 @@ h08_1_ <- read_excel("h08 (1).xls")
 ## Is there a relationship between Median Household Income and Crimes?
 
 # Tidying
-For all datasets, 
+For all the datasets, it is important to note we did not include Washington D.C as a state.
+
 ```{r}
-# For all datasets, remove District of Columbia since it is not a state and only keep key and unique variables for each dataset 
+# For all datasets, remove District of Columbia since it is not a state
+# Only keep key and unique variables for each dataset 
 
 # rename dataset to us_education
 us_education <- states_all_extended %>% 
@@ -68,9 +70,14 @@ arrange(Year)
 
 # Make state names be uppercase to make merging the datasets easier
 crime_rate$State <- toupper(crime_rate$State)
+```
 
-# Rename h08_1_
-# Find columns to delete
+The median_housing_income dataset is untidy and contains unnecessary info in relation to what we wanted to analyze, so we modified it for our questions.  
+
+We changed the column names in the dataset to be named in sequential order. Then, we deleted all the columns containing standard error data.
+
+```{r tidy}
+# find standard error columns and delete them
 med_income_base = h08_1_
 colnames(med_income_base) = paste(seq_along(med_income_base))
 del_col = list()
@@ -81,29 +88,44 @@ for (col in 1:ncol(h08_1_)) {
   }
 }
 med_income_base = med_income_base[,!names(med_income_base) %in% del_col]
+```
 
-# Rename columns
+We renamed the columns to their respective titles given in the dataset on the fourth row. And then deleted rows containing unimportant information. 
+There were two columns containing different info for the year 2013. We tried to find why they were different, in addition as to what the values in the parentheses meant, but there was no documentation for this dataset. Thus, we decided to keep the first column instance of the year 2013 so that we could have no differing data for the same year and state combination that could possibly affect our graphs.
+
+```{r tidy}
+# rename columns
 colnames(med_income_base) = med_income_base[4,]
 
-# Remove undesired data
+# remove undesired data
 med_income_base = med_income_base[-(1:6),-9]
+
 i = min(which(med_income_base$State=='Wyoming'))
 med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
+```
 
-# Make desired data tidy
+We made the median_housing_income dataset tidy by changing the individual year columns to be under the Year variable and their values under column Median_Income. Then, we filtered for observations within our desired time period, which is from 1992 to 2016.
+
+```{r tidy}
+# make desired data tidy
 med_income_tidy = med_income_untidy |> 
   pivot_longer(!State, names_to="Year", values_to="Median_Income") |> 
   filter(substr(Year, 1, 4) %in% (1992:2016))
 med_income_tidy$State = toupper(med_income_tidy$State)
+```
 
-# Find years with () and duplicate years other than 2013
+We checked for years with some values in parentheses and for duplicate years for the same state.
+We also removed the values in parentheses for the rest of the years. And for the sake of merging the datasets easier, we completely capitalized the state names.
+
+```{r tidy}
+# find years with () and duplicate years other than 2013
 pyears = med_income_tidy[grep(")$",med_income_tidy$Year),]
 dupl_years = pyears |>
   mutate(compare=substr(Year,1,6)) |>
   select(State, compare) |> group_by(State, compare) |>
   filter(duplicated(compare))
 
-# Remove second appearance of same year w/ state and () from some years
+# remove () from some years
 med_income_tidy$Year = substr(med_income_tidy$Year, 1,4)
 med_income = med_income_tidy
 ```
