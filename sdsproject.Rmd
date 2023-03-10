@@ -1,14 +1,15 @@
 ---
-title: "Finding the Relationship between Federal Revenue for Public Schools and Violent Crimes, as well as Median Household Income and Violent Crimes"
+title: Finding the Relationship between Federal Revenue for Public Schools and Violent
+  Crimes, as well as Median Household Income and Violent Crimes
 author: "Aileen Li, Nyah Strickland"
 date: "2023-03-04"
-output: 
+output:
   pdf_document: default
   html_document: default
-editor_options: 
+  word_document: default
+editor_options:
   chunk_output_type: console
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -25,7 +26,9 @@ And the following are the datasets we used(click to access):
 -[Crime Rate by State Dataset](https://corgis-edu.github.io/corgis/csv/state_crime/)
 
 The median household income, U.S. Education, and state crime rate datasets were acquired from the U.S. Census Bureau, U.S. Census Bureau and the National Center for Education Statistics (NCES), and Unified Crime Reporting Statistics and under the collaboration of the U.S. Department of Justice and the Federal Bureau of Investigation, respectively. We joined the data sets by the state names, which are the unique rows, and year. Specifically, we looked into the years from 1992 to 2016 for both research questions. For the median household income dataset, the unique variable is the median household income (Median income) in the current dollars dataset, measuring the annual state median household incomes without considering inflation. As for the U.S. Education dataset, the unique variable is federal revenue (FEDERAL_REVENUE), and for the violent crime rate dataset, the unique variables are violent crime rate (Data.Rates.Violent.All), nonviolent crime rate (Data.Rates.Property.All), burglary crime rate (Data.Rates.Property.Burglary), and murder rate (Data.Rates.Violent.Murder). The key variables are categorical while all the unique variables are numerical. These are the eight variables required for the project.
+
 =======
+
 First, we loaded the libraries and oeiginal datasets we needed.
 ``` {r l&d, message=FALSE}
 library(tidyverse)
@@ -172,7 +175,6 @@ rqs |> select(All_Property_Burglary_Rates) |>
 summary(rqs$All_Property_Burglary_Rates)
 ```
 The average rate of all reported offenses of Property-related Burglaries per 100,000 population is 731. The minimum and maximum rates are 201.7 per 100,000 and 1888.8 per 100,000.
-=======
 # Visualizing
 ### 1 Variable Plots
 We created plots graphing one variable each.\
@@ -326,6 +328,9 @@ BM2 %>% ggplot(aes(x = All_Property_Burglary_Rates,y = Median_Income)) +
   theme(legend.position = "none",strip.text = element_text(size = 7, margin=margin()))
 ```
 The relationship between all property burglary rates and state household median incomes seems to have a strong negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as Arkansas, Kentucky, and Mississippi show a weaker inverse relationship between all property burglary rates and state household median incomes.
+
+====
+
 # Discussion
 ### Is there a relationship between Federal Funding and Crimes?
 
