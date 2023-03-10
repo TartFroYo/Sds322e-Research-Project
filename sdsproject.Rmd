@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
   As inflation increases annually, household incomes must also rise to adjust for standard of living in each state. Our second research question is if there is a relationship between median household income and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship between these two datasets, then state governments should make changes in their policies to help states where households are most affected. We expect the greater the median household income, the less violent crimes there are by state. The following are the research questions we investigated:
   
 -__Is there a relationship between Federal Revenue for Public Schools and Crimes?__\
--__Is there a relationship between Median Household Income and Crimes?__\
+-__Is there a relationship between Median Household Income and Crimes?__
 
 And the following are the datasets we used(click to access):  
 -[Median Household Income by State](https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h08.xls)\
@@ -27,16 +27,14 @@ And the following are the datasets we used(click to access):
 The median household income, U.S. Education, and state crime rate datasets were acquired from the U.S. Census Bureau, U.S. Census Bureau and the National Center for Education Statistics (NCES), and Unified Crime Reporting Statistics and under the collaboration of the U.S. Department of Justice and the Federal Bureau of Investigation, respectively. We joined the data sets by the state names, which are the unique rows, and year. Specifically, we looked into the years from 1992 to 2016 for both research questions. For the median household income dataset, the unique variable is the median household income (Median income) in the current dollars dataset, measuring the annual state median household incomes without considering inflation. As for the U.S. Education dataset, the unique variable is federal revenue (FEDERAL_REVENUE), and for the violent crime rate dataset, the unique variables are violent crime rate (Data.Rates.Violent.All), nonviolent crime rate (Data.Rates.Property.All), burglary crime rate (Data.Rates.Property.Burglary), and murder rate (Data.Rates.Violent.Murder). The key variables are categorical while all the unique variables are numerical. These are the eight variables required for the project.
 =======
 First, we loaded the libraries and oeiginal datasets we needed.
-``` {r lib, message=FALSE}
+``` {r l&d, message=FALSE}
 library(tidyverse)
 library(readr)
 library(readxl)
-
 states_all_extended <- read_csv("states_all_extended.csv")
 state_crime <- read_csv("state_crime.csv")
 h08_1_ <- read_excel("h08 (1).xls")
 ```
-
 # Tidying
 We then started tidying our datasets. For all the datasets, it is important to note we did not include Washington D.C as a state.
 
@@ -51,7 +49,6 @@ us_education <- states_all_extended %>%
 # Make sure state names are identical in both datasets
   mutate(State = str_replace(State, "_", " "))
 ```
-
 DESCRIBE
 ```{r cri}
 # Rename crime variable names so they don't have the word 'Data' in it
@@ -71,7 +68,6 @@ crime_rate <- state_crime %>%
 # Make state names be uppercase to make merging the datasets easier
 crime_rate$State <- toupper(crime_rate$State)
 ```
-
 The median_housing_income dataset is untidy and contains unnecessary info in relation to what we wanted to analyze, so we modified it for our questions.  
 We changed the column names in the dataset to be named in sequential order. Then, we deleted all the columns containing standard error data, which was every other column starting at the second column.
 ```{r mhi1}
@@ -86,19 +82,16 @@ for (col in 1:ncol(h08_1_)) {
 }
 med_income_base = med_income_base[,!names(med_income_base) %in% del_col]
 ```
-
 We renamed the columns to their respective titles given in the dataset on the fourth row. And then deleted rows containing unimportant information. 
 There were two columns containing different info for the year 2013. We tried to find why they were different, in addition as to what the values in the parentheses meant, but there was no documentation for this dataset. Thus, we decided to keep the first column instance of the year 2013 so that we would have no differing data for the same year and state combination that could possibly affect our graphs.
 ```{r mhi2}
 # Rename columns
 colnames(med_income_base) = med_income_base[4,]
-
 # Remove undesired data
 med_income_base = med_income_base[-(1:6),-9]
 i = min(which(med_income_base$State=='Wyoming'))
 med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
 ```
-
 We made the median_housing_income dataset tidy by changing the individual year columns to be under the Year variable and their values under Median_Income. Then, we filtered for observations within our desired time period, which is from 1992 to 2016, and arranged them in ascending order.
 ```{r mhi3}
 # Make desired data tidy
@@ -107,7 +100,6 @@ med_income_tidy = med_income_untidy |>
   filter(substr(Year, 1, 4) %in% (1992:2016)) |> arrange(Year)
 med_income_tidy$State = toupper(med_income_tidy$State)
 ```
-
 We found years with values in parentheses and checked for duplicate years for the same state.
 We also removed the values in parentheses for the rest of the years. And for the sake of merging the datasets easier, we completely capitalized the state names.
 ```{r mhi4}
@@ -117,12 +109,10 @@ dupl_years = pyears |>
   mutate(compare=substr(Year,1,6)) |>
   select(State, compare) |> group_by(State, compare) |>
   filter(duplicated(compare))
-
 # Remove () from some years
 med_income_tidy$Year = substr(med_income_tidy$Year, 1,4)
 med_income = med_income_tidy
 ```
-
 # Joining/Merging
 We found the number of rows and columns in each other datasets before merging.
 ```{r num}
@@ -151,14 +141,12 @@ nrow(rqs)
 Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these 2 datasets into a single dataset rqs, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted, and it is the reason we left join crime_rate to us_education rather than the other way around. After joining the med_income to the previously joined dataset, we still have 1,250 obervations but with more columns because the process added the unique columns from med_income to the observations with matching state and year in the latter, which was all of them.
 
 There are 1,250 observations in the rqs dataset. This means that from the total number of overlapped observations (being 3055-1682=1373) in both us_education and state_crime datasets, there were 1373-1250=123 observations that had missing values. Since the crime_rate was left joined to us_education, the missing values likely arose from not matching with the year and state name for Federal_Revenue as this variable records state public school federal funding from 1992-2016.
-
 # Wrangling
 We created a new variable called Fed_Rev, which is calculated by dividing the Federal_Revenue by 100,000.
 ```{r mut}
 # Create new var. from other
 rqs = rqs |> mutate(Fed_Rev=Federal_Revenue/100000)
 ```
-
 We then found the mean, median, maximum, and minimum for the following variables if it was possible.
 ```{r sss1}
 # Compute summary stat.s
@@ -167,20 +155,17 @@ summary(rqs$Year)
 ```
 There are 1,250 values of the State variable, which is a character vector.
 For Year in rqs, the earliest year is 1992 and most recent year is 2016. The median and average year is 2004. This makes sense sense we selected this time period and there is an equal amount of observations for each year.
-
 ```{r sss2}
 rqs$Median_Income = as.numeric(rqs$Median_Income)
 summary(rqs$Median_Income)
 ```
 The Median_Income variable has a minimum of $20,271 and a maximum of $76,260. The mean is $44,641, and the median is $36,568.
-
 ```{r sss3}
 rqs |> select(All_Property_Rates) |> 
   summarize(mean=mean(All_Property_Rates))
 summary(rqs$All_Property_Rates)
 ```
 The average rate of all reported offenses of Property-related crimes per 100,000 population by state is 3,449 people per 100,000 population. The minimum and maximum rates are 1,407 per 100,000 and 7,500 per 100,000, respectively.
-
 ```{r sss4}
 rqs |> select(All_Property_Burglary_Rates) |> 
   summarize(mean=mean(All_Property_Burglary_Rates))
@@ -190,7 +175,7 @@ The average rate of all reported offenses of Property-related Burglaries per 100
 =======
 # Visualizing
 ### 1 Variable Plots
-We created plots graphing one variable each.
+We created plots graphing one variable each.\
 __Figure 1__ Figure 1 plots All_Violent_Rates
 ```{r vis1}
 # find max violent crime rate
@@ -225,9 +210,8 @@ rqs %>% filter(Year==2002) |>
 
 ```
 The distribution of federal funds to state public schools is strongly skewed to the right. This shows that not a lot of state public schools receive federal funds.
-
 ### 2 Variable Plots
-We created plots graphing two variables each.
+We created plots graphing two variables each.\
 __Figure 3__ Figure 3 plots Year and Federal_Revenue
 ```{r vis3}
 # Graph 2 variables: x = year, y = federal funds to state schools
@@ -272,9 +256,8 @@ rqs %>% ggplot(aes(x = Year, y = mi)) +
   # theme(legend.position = "none")
 ```
 The distribution of U.S. state median household income over 1992-2016 has a generally positive upward slope. This shows that as time goes on, state median household income also increases.
-
 ### 3 Variable Plots
-We created plots graphing three variables. We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
+We created plots graphing three variables. We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.\
 __Figure 5__ Figure 5 plots All_Murder_Rates, Federal_Revenue, and State.
 ```{r vis5}
 # find max murder rates
@@ -343,7 +326,6 @@ BM2 %>% ggplot(aes(x = All_Property_Burglary_Rates,y = Median_Income)) +
   theme(legend.position = "none",strip.text = element_text(size = 7, margin=margin()))
 ```
 The relationship between all property burglary rates and state household median incomes seems to have a strong negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as Arkansas, Kentucky, and Mississippi show a weaker inverse relationship between all property burglary rates and state household median incomes.
-
 # Discussion
 ### Is there a relationship between Federal Funding and Crimes?
 
@@ -352,9 +334,7 @@ The relationship between all property burglary rates and state household median 
 ### Challenges
 It was challenging to figure out how to tidy untidy data, especially since there were many special cases we had to fix. This process took us the longest to do. We learned that there's always gonna be caveats with datasets that you need to watch out for, so it is important to have an eye for detail.
 It was also tricky creating plots because we had to consider how to form them in order to answer our questions. We learned that bouncing off ideas and drawing them out is a good way to figure out which plot is best.
-
 ### Acknowledgements
-We acknowledge the following people:\\
 __Aileen Li__, worked on:\
 -Tidying\
 -Joining/Merging\
@@ -365,8 +345,8 @@ __Nyah Strickland__, worked on:\
 -Joining/Merging\
 -Visualizing\
 -Discussion\
-
 # References
+Click the names to go to the link of where we got our datasets:\
 -[Median Household Income by State](https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h08.xls)\
 -[U.S. Education Dataset](https://www.kaggle.com/datasets/noriuk/us-education-datasets-unification-project?resource=download)\
 -[Crime Rate by State Dataset](https://corgis-edu.github.io/corgis/csv/state_crime/)\
