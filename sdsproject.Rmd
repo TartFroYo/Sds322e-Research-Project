@@ -47,6 +47,7 @@ h08_1_ <- read_excel("h08 (1).xls")
 ## Is there a relationship between Median Household Income and Crimes?
 
 # Tidying
+For all datasets, 
 ```{r}
 # For all datasets, remove District of Columbia since it is not a state and only keep key and unique variables for each dataset 
 
