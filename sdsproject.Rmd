@@ -207,7 +207,6 @@ rqs %>% filter(Year==2002) |>
   labs(title = "Distribution of Federal Funds to State Public Schools in 2002", 
        y = "Frequency") +
   scale_x_continuous(name = "U.S. Federal Funding to State Public Schools by Hundred Thousands in 2002") +
-  # theme(axis.text.x = element_text(angle=90)) + 
   theme_bw()
 
 ```
