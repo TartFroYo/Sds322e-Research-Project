@@ -141,7 +141,7 @@ med_income = med_income_tidy
 
 # Joining/Merging
 
-```{r}
+```{r num}
 # Note how many observations are in each data set
 nrow(us_education)
 ncol(us_education)
@@ -149,7 +149,11 @@ nrow(crime_rate)
 ncol(crime_rate)
 nrow(med_income)
 ncol(med_income)
+```
 
+There are 1,682 observations and 1 unique variable (Federal_Revenue) in the us_education dataset, 3,055 observations in the state_crime dataset observations and 4 unique variables (All_Property_Rates, All_Property_Burglary_Rates, All_Violent_Rates, All_Murder_Rates), and 1,250 observations and 1 unique variable (Median_Income). 
+
+```{r ljoin}
 # Left join state_crime to us_education by key variable Year and State
 research_questions <- left_join(us_education,crime_rate, by = c("Year", "State")) %>%
   filter(!is.na(Federal_Revenue)) 
@@ -160,15 +164,11 @@ research_questions = left_join(research_questions, med_income, by = c("Year", "S
  
 # Filter missing values of federal revenue 
 nrow(research_questions)
-
 ```
 
-There are 1,682 observations and 1 unique variable (Federal_Revenue) in the us_education dataset, 3,055 observations in the state_crime dataset observations and 4 unique variables (All_Property_Rates, All_Property_Burglary_Rates, All_Violent_Rates, All_Murder_Rates), and 1,250 observations and 1 unique variable (Median_Income). 
 Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these 2 datasets into a single dataset research_questions, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted, and it is the reason we left join crime_rate to us_education rather than the other way around. After joining the med_income to the previously joined dataset, we still have 1,250 obervations but with more columns because the process added the unique columns from med_income to the observations with matching state and year in the latter, which was all of them.
 
 There are 1,250 observations in the research_question dataset. This means that from the total number of overlapped observations (being 3055-1682=1373) in both us_education and state_crime datasets, there were 1373-1250=123 observations that had missing values. Since the crime_rate was left joined to us_education, the missing values likely arose from not matching with the year and state name for Federal_Revenue as this variable records state public school federal funding from 1992-2016.
-
-
 
 # Wrangling
 ```{r}
