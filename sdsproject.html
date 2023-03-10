@@ -359,14 +359,13 @@ Household Income and Violent Crimes</h1>
 </div>
 
 
-<p>For many years, a number of U.S. states have made changes to public
-school funding. One of our research questions is if there is a
-relationship between change in federal revenue for public schools and
-violent crimes by state during 1992-2016. We wanted to explore this
-because if there is a relationship, depending on what kind, states can
-make changes in their budget for the betterment of their enrolled
-students. We expected the more funding for public schools, the less
-violent crimes there are by state.</p>
+<p>Many U.S. states have made changes to public school funding. One of
+our research questions is if there is a relationship between change in
+federal revenue for public schools and violent crimes by state during
+1992-2016. We wanted to explore this because if there is a relationship,
+depending on what kind, states can make changes in their budget for the
+betterment of their enrolled students. We expected the more funding for
+public schools, the less violent crimes there are by state.</p>
 <p>As inflation increases annually, household incomes must also rise to
 adjust for standard of living in each state. Our second research
 question is if there is a relationship between median household income
@@ -524,28 +523,41 @@ Crimes?</h2>
 </div>
 <div id="tidying" class="section level1">
 <h1>Tidying</h1>
-<pre class="r"><code># For all datasets, remove District of Columbia since it is not a state and only keep key and unique variables for each dataset 
+<p>For all the datasets, it is important to note we did not include
+Washington D.C as a state.</p>
+<pre class="r"><code># Only keep key and unique variables for each dataset 
 
-# rename dataset to us_education
+# Eename dataset to us_education
 us_education &lt;- states_all_extended %&gt;% 
-select(&#39;STATE&#39;, &#39;YEAR&#39;, &#39;FEDERAL_REVENUE&#39;) %&gt;% 
-filter(!str_detect(STATE, &quot;^DISTRICT&quot;)) %&gt;%
-rename(&quot;State&quot; = &quot;STATE&quot;, &quot;Year&quot; = &quot;YEAR&quot;,  &quot;Federal_Revenue&quot; = &quot;FEDERAL_REVENUE&quot;) %&gt;%
+  select(&#39;STATE&#39;, &#39;YEAR&#39;, &#39;FEDERAL_REVENUE&#39;) %&gt;% 
+  filter(!str_detect(STATE, &quot;^DISTRICT&quot;)) %&gt;%
+  rename(&quot;State&quot; = &quot;STATE&quot;, &quot;Year&quot; = &quot;YEAR&quot;,  &quot;Federal_Revenue&quot; = &quot;FEDERAL_REVENUE&quot;) %&gt;%
 # Make sure state names are identical in both datasets
-mutate(State = str_replace(State, &quot;_&quot;, &quot; &quot;))
-
-# rename crime variable names so they don&#39;t have the word &#39;Data&#39; in it
+  mutate(State = str_replace(State, &quot;_&quot;, &quot; &quot;))</code></pre>
+<pre class="r"><code># Rename crime variable names so they don&#39;t have the word &#39;Data&#39; in it
 crime_rate &lt;- state_crime %&gt;% 
-select(&#39;State&#39;, &#39;Year&#39;, &#39;Data.Rates.Violent.All&#39;, &#39;Data.Rates.Property.All&#39;, &#39;Data.Rates.Property.Burglary&#39;, &#39;Data.Rates.Violent.Murder&#39;) %&gt;% 
-filter(!str_detect(State, &quot;^District&quot;)) %&gt;%   rename(&quot;All_Property_Rates&quot; = &quot;Data.Rates.Property.All&quot;, &quot;All_Property_Burglary_Rates&quot; = &quot;Data.Rates.Property.Burglary&quot;, &quot;All_Violent_Rates&quot; = &quot;Data.Rates.Violent.All&quot;, &quot;All_Murder_Rates&quot; = &quot;Data.Rates.Violent.Murder&quot;) %&gt;% 
+  select(&#39;State&#39;, 
+       &#39;Year&#39;, 
+       &#39;Data.Rates.Violent.All&#39;, 
+       &#39;Data.Rates.Property.All&#39;, 
+       &#39;Data.Rates.Property.Burglary&#39;, 
+       &#39;Data.Rates.Violent.Murder&#39;) %&gt;% filter(!str_detect(State, &quot;^District&quot;)) %&gt;%   
+  rename(&quot;All_Property_Rates&quot; = &quot;Data.Rates.Property.All&quot;, 
+         &quot;All_Property_Burglary_Rates&quot; = &quot;Data.Rates.Property.Burglary&quot;, 
+         &quot;All_Violent_Rates&quot; = &quot;Data.Rates.Violent.All&quot;, 
+         &quot;All_Murder_Rates&quot; = &quot;Data.Rates.Violent.Murder&quot;) %&gt;% 
+  
 #put year in ascending order so it is easy to merge this    dataset with us_education 
-arrange(Year)
-
-# make state names be uppercase to make merging the datasets easier
-crime_rate$State &lt;- toupper(crime_rate$State)
-
-# rename h08_1_ dataset
-# find standard error columns and delete them
+  arrange(Year)
+# Make state names be uppercase to make merging the datasets easier
+crime_rate$State &lt;- toupper(crime_rate$State)</code></pre>
+<p>The median_housing_income dataset is untidy and contains unnecessary
+info in relation to what we wanted to analyze, so we modified it for our
+questions.<br />
+We changed the column names in the dataset to be named in sequential
+order. Then, we deleted all the columns containing standard error
+data.</p>
+<pre class="r"><code># Find standard error columns and delete them
 med_income_base = h08_1_
 colnames(med_income_base) = paste(seq_along(med_income_base))
 del_col = list()
@@ -555,22 +567,47 @@ for (col in 1:ncol(h08_1_)) {
     del_col= append(del_col, as.character(col))
   }
 }
-med_income_base = med_income_base[,!names(med_income_base) %in% del_col]
-
-# rename columns
+med_income_base = med_income_base[,!names(med_income_base) %in% del_col]</code></pre>
+<p>We renamed the columns to their respective titles given in the
+dataset on the fourth row. And then deleted rows containing unimportant
+information. There were two columns containing different info for the
+year 2013. We tried to find why they were different, in addition as to
+what the values in the parentheses meant, but there was no documentation
+for this dataset. Thus, we decided to keep the first column instance of
+the year 2013 so that we would have no differing data for the same year
+and state combination that could possibly affect our graphs.</p>
+<pre class="r"><code># Rename columns
 colnames(med_income_base) = med_income_base[4,]
 
-# remove extraneous data
-med_income_base = med_income_base[-(1:6),]
+# Remove undesired data
+med_income_base = med_income_base[-(1:6),-9]
 
 i = min(which(med_income_base$State==&#39;Wyoming&#39;))
-med_income_untidy = med_income_base[1:i,] |&gt; filter(State!=&quot;D.C.&quot;)
-
-# make desired data tidy
+med_income_untidy = med_income_base[1:i,] |&gt; filter(State!=&quot;D.C.&quot;)</code></pre>
+<p>We made the median_housing_income dataset tidy by changing the
+individual year columns to be under the Year variable and their values
+under column Median_Income. Then, we filtered for observations within
+our desired time period, which is from 1992 to 2016 and arranged them in
+ascending order.</p>
+<pre class="r"><code># Make desired data tidy
 med_income_tidy = med_income_untidy |&gt; 
   pivot_longer(!State, names_to=&quot;Year&quot;, values_to=&quot;Median_Income&quot;) |&gt; 
-  filter(substr(Year, 1, 4) %in% (1992:2016))
+  filter(substr(Year, 1, 4) %in% (1992:2016)) |&gt; arrange(Year)
 med_income_tidy$State = toupper(med_income_tidy$State)</code></pre>
+<p>We found years with values in parentheses and checked for duplicate
+years for the same state. We also removed the values in parentheses for
+the rest of the years. And for the sake of merging the datasets easier,
+we completely capitalized the state names.</p>
+<pre class="r"><code># Find years with () and duplicate years other than 2013
+pyears = med_income_tidy[grep(&quot;)$&quot;,med_income_tidy$Year),]
+dupl_years = pyears |&gt;
+  mutate(compare=substr(Year,1,6)) |&gt;
+  select(State, compare) |&gt; group_by(State, compare) |&gt;
+  filter(duplicated(compare))
+
+# Remove () from some years
+med_income_tidy$Year = substr(med_income_tidy$Year, 1,4)
+med_income = med_income_tidy</code></pre>
 </div>
 <div id="joiningmerging" class="section level1">
 <h1>Joining/Merging</h1>
@@ -583,53 +620,87 @@ nrow(us_education)</code></pre>
 <pre><code>## [1] 3055</code></pre>
 <pre class="r"><code>ncol(crime_rate)</code></pre>
 <pre><code>## [1] 6</code></pre>
-<pre class="r"><code># Left join state_crime to us_education by key variable Year and State
-# Left joining crime_rate to us_education makes the question1 dataset start with 1992 
-# Filter missing values of federal revenue 
-research_questions &lt;- left_join(us_education,crime_rate, by = c(&quot;Year&quot;, &quot;State&quot;)) %&gt;% filter(!is.na(Federal_Revenue)) 
-research_questions</code></pre>
-<pre><code>## # A tibble: 1,250 × 7
-##    State        Year Federal_Revenue All_Violent_Rates All_Pro…¹ All_P…² All_M…³
-##    &lt;chr&gt;       &lt;dbl&gt;           &lt;dbl&gt;             &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
-##  1 ALABAMA      1992          304177              872.     4396.   1186     11  
-##  2 ALASKA       1992          106780              660.     4909     881.     7.5
-##  3 ARIZONA      1992          297888              671.     6358.   1412.     8.1
-##  4 ARKANSAS     1992          178571              576.     4185.   1093.    10.8
-##  5 CALIFORNIA   1992         2072470             1120.     5560.   1385.    12.7
-##  6 COLORADO     1992          163253              579.     5380.   1091.     6.2
-##  7 CONNECTICUT  1992          143542              495.     4558.   1109.     5.1
-##  8 DELAWARE     1992           45945              621.     4227.    958.     4.6
-##  9 FLORIDA      1992          788420             1207.     7151    1889.     9  
-## 10 GEORGIA      1992          398701              733.     5672.   1443.    11  
-## # … with 1,240 more rows, and abbreviated variable names ¹​All_Property_Rates,
-## #   ²​All_Property_Burglary_Rates, ³​All_Murder_Rates</code></pre>
-<pre class="r"><code>nrow(research_questions)</code></pre>
+<pre class="r"><code>nrow(med_income)</code></pre>
 <pre><code>## [1] 1250</code></pre>
-<p>There are 1682 observations and 1 unique variable (Federal_Revenue)
-in the us_education dataset while in the state_crime dataset there are
-3055 observations and 4 unique variables (All_Property_Rates,
-All_Property_Burglary_Rates, All_Violent_Rates, All_Murder_Rates).
-Between us_education and state_crime, there are 2 ID variables (Year and
-State) in common. After joining these 2 datasets into a single dataset
-research_questions, there are 1682 observations since the us_education
-spans from 1992-2016, causing the merged dataset to stop at that time
-frame. This is also the time period we wanted. There are 1250
-observations in the question1 dataset. This means that from the total
-number of overlapped observations (being 3055-1682=1373) in both
-us_education and state_crime datasets, there were 1373-1250=123
-observations that had missing values. Since the crime_rate was left
-joined to us_education, the missing values likely arose from not
-matching with the year and state name for Federal_Revenue as this
-variable records state public school federal funding from 1992-2016.</p>
+<pre class="r"><code>ncol(med_income)</code></pre>
+<pre><code>## [1] 3</code></pre>
+<p>There are 1,682 observations and 1 unique variable (Federal_Revenue)
+in the us_education dataset, 3,055 observations in the state_crime
+dataset observations and 4 unique variables (All_Property_Rates,
+All_Property_Burglary_Rates, All_Violent_Rates, All_Murder_Rates), and
+1,250 observations and 1 unique variable (Median_Income).</p>
+<pre class="r"><code># Left join state_crime to us_education by key variable Year and State
+rqs &lt;- left_join(us_education,crime_rate, by = c(&quot;Year&quot;, &quot;State&quot;)) %&gt;%
+  filter(!is.na(Federal_Revenue)) 
+
+# Left join med_income to prev. joined dataset by same key var.s
+med_income$Year = as.numeric(med_income$Year)
+rqs = left_join(rqs, med_income, by = c(&quot;Year&quot;, &quot;State&quot;))
+ 
+# Filter missing values of federal revenue 
+nrow(rqs)</code></pre>
+<pre><code>## [1] 1250</code></pre>
+<p>Between us_education and state_crime, there are 2 ID variables (Year
+and State) in common. After joining these 2 datasets into a single
+dataset research_questions, there are 1682 observations since the
+us_education spans from 1992-2016, causing the merged dataset to stop at
+that time frame. This is also the time period we wanted, and it is the
+reason we left join crime_rate to us_education rather than the other way
+around. After joining the med_income to the previously joined dataset,
+we still have 1,250 obervations but with more columns because the
+process added the unique columns from med_income to the observations
+with matching state and year in the latter, which was all of them.</p>
+<p>There are 1,250 observations in the research_question dataset. This
+means that from the total number of overlapped observations (being
+3055-1682=1373) in both us_education and state_crime datasets, there
+were 1373-1250=123 observations that had missing values. Since the
+crime_rate was left joined to us_education, the missing values likely
+arose from not matching with the year and state name for Federal_Revenue
+as this variable records state public school federal funding from
+1992-2016.</p>
 </div>
 <div id="wrangling" class="section level1">
 <h1>Wrangling</h1>
+<pre class="r"><code># Create new var. from other
+rqs = rqs |&gt; mutate(Fed_Rev_Mil=Federal_Revenue/100000)</code></pre>
+<pre class="r"><code># Compute summary stat.s
+summary(rqs$State)</code></pre>
+<pre><code>##    Length     Class      Mode 
+##      1250 character character</code></pre>
+<pre class="r"><code>summary(rqs$Year)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    1992    1998    2004    2004    2010    2016</code></pre>
+<pre class="r"><code>summary(rqs$Median_Income)</code></pre>
+<pre><code>##    Length     Class      Mode 
+##      1250 character character</code></pre>
+<pre class="r"><code>summary(rqs$All_Property_Rates)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    1407    2642    3353    3449    4096    7500</code></pre>
+<pre class="r"><code>summary(rqs$All_Property_Burglary_Rates)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   201.7   513.9   690.0   731.4   936.5  1888.8</code></pre>
 </div>
 <div id="visualizing" class="section level1">
 <h1>Visualizing</h1>
 </div>
 <div id="discussion" class="section level1">
 <h1>Discussion</h1>
+<p>It was challenging to figure out how to tidy untidy data, especially
+since there were many special cases we had to fix. This process took us
+the longest to do. We learned that there’s always gonna be caveats with
+datasets that you need to watch out for, so it is important to have an
+eye for detail. It was also tricky creating plots because we had to
+consider how to form them in order to answer our questions. We learned
+that bouncing off ideas and drawing them out is a good way to figure out
+which plot is best.</p>
+<div id="acknowledgements" class="section level3">
+<h3>Acknowledgements</h3>
+<p>We acknowledge the following people:<br />
+<strong>Aileen Li</strong>, worked on:<br />
+-Tidying -Joining/Merging -Wrangling -Discussion</p>
+<p><strong>Nyah Strickland</strong>, worked on:<br />
+-Tidying -Joining/Merging -Visualizing -Discussion</p>
+</div>
 </div>
 
 

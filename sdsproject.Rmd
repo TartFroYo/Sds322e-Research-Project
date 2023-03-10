@@ -50,10 +50,9 @@ h08_1_ <- read_excel("h08 (1).xls")
 For all the datasets, it is important to note we did not include Washington D.C as a state.
 
 ```{r edu}
-# For all datasets, remove District of Columbia since it is not a state
 # Only keep key and unique variables for each dataset 
 
-# rename dataset to us_education
+# Eename dataset to us_education
 us_education <- states_all_extended %>% 
   select('STATE', 'YEAR', 'FEDERAL_REVENUE') %>% 
   filter(!str_detect(STATE, "^DISTRICT")) %>%
@@ -86,7 +85,7 @@ The median_housing_income dataset is untidy and contains unnecessary info in rel
 We changed the column names in the dataset to be named in sequential order. Then, we deleted all the columns containing standard error data.
 
 ```{r mhi1}
-# find standard error columns and delete them
+# Find standard error columns and delete them
 med_income_base = h08_1_
 colnames(med_income_base) = paste(seq_along(med_income_base))
 del_col = list()
@@ -103,10 +102,10 @@ We renamed the columns to their respective titles given in the dataset on the fo
 There were two columns containing different info for the year 2013. We tried to find why they were different, in addition as to what the values in the parentheses meant, but there was no documentation for this dataset. Thus, we decided to keep the first column instance of the year 2013 so that we would have no differing data for the same year and state combination that could possibly affect our graphs.
 
 ```{r mhi2}
-# rename columns
+# Rename columns
 colnames(med_income_base) = med_income_base[4,]
 
-# remove undesired data
+# Remove undesired data
 med_income_base = med_income_base[-(1:6),-9]
 
 i = min(which(med_income_base$State=='Wyoming'))
@@ -116,7 +115,7 @@ med_income_untidy = med_income_base[1:i,] |> filter(State!="D.C.")
 We made the median_housing_income dataset tidy by changing the individual year columns to be under the Year variable and their values under column Median_Income. Then, we filtered for observations within our desired time period, which is from 1992 to 2016 and arranged them in ascending order.
 
 ```{r mhi3}
-# make desired data tidy
+# Make desired data tidy
 med_income_tidy = med_income_untidy |> 
   pivot_longer(!State, names_to="Year", values_to="Median_Income") |> 
   filter(substr(Year, 1, 4) %in% (1992:2016)) |> arrange(Year)
@@ -127,14 +126,14 @@ We found years with values in parentheses and checked for duplicate years for th
 We also removed the values in parentheses for the rest of the years. And for the sake of merging the datasets easier, we completely capitalized the state names.
 
 ```{r mhi4}
-# find years with () and duplicate years other than 2013
+# Find years with () and duplicate years other than 2013
 pyears = med_income_tidy[grep(")$",med_income_tidy$Year),]
 dupl_years = pyears |>
   mutate(compare=substr(Year,1,6)) |>
   select(State, compare) |> group_by(State, compare) |>
   filter(duplicated(compare))
 
-# remove () from some years
+# Remove () from some years
 med_income_tidy$Year = substr(med_income_tidy$Year, 1,4)
 med_income = med_income_tidy
 ```
@@ -155,15 +154,15 @@ There are 1,682 observations and 1 unique variable (Federal_Revenue) in the us_e
 
 ```{r ljoin}
 # Left join state_crime to us_education by key variable Year and State
-research_questions <- left_join(us_education,crime_rate, by = c("Year", "State")) %>%
+rqs <- left_join(us_education,crime_rate, by = c("Year", "State")) %>%
   filter(!is.na(Federal_Revenue)) 
 
 # Left join med_income to prev. joined dataset by same key var.s
 med_income$Year = as.numeric(med_income$Year)
-research_questions = left_join(research_questions, med_income, by = c("Year", "State"))
+rqs = left_join(rqs, med_income, by = c("Year", "State"))
  
 # Filter missing values of federal revenue 
-nrow(research_questions)
+nrow(rqs)
 ```
 
 Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these 2 datasets into a single dataset research_questions, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted, and it is the reason we left join crime_rate to us_education rather than the other way around. After joining the med_income to the previously joined dataset, we still have 1,250 obervations but with more columns because the process added the unique columns from med_income to the observations with matching state and year in the latter, which was all of them.
@@ -171,13 +170,52 @@ Between us_education and state_crime, there are 2 ID variables (Year and State) 
 There are 1,250 observations in the research_question dataset. This means that from the total number of overlapped observations (being 3055-1682=1373) in both us_education and state_crime datasets, there were 1373-1250=123 observations that had missing values. Since the crime_rate was left joined to us_education, the missing values likely arose from not matching with the year and state name for Federal_Revenue as this variable records state public school federal funding from 1992-2016.
 
 # Wrangling
-```{r}
+
+```{r mut}
+# Create new var. from other
+rqs = rqs |> mutate(Fed_Rev_Mil=Federal_Revenue/100000)
+```
+
+```{r sss}
+# Compute summary stat.s
+summary(rqs$State)
+summary(rqs$Year)
+summary(rqs$Median_Income)
+summary(rqs$All_Property_Rates)
+summary(rqs$All_Property_Burglary_Rates)
 
 ```
 
+
+
 # Visualizing
-```{r}
+
+```{r vis}
 
 ```
 
 # Discussion
+
+
+It was challenging to figure out how to tidy untidy data, especially since there were many special cases we had to fix. This process took us the longest to do. We learned that there's always gonna be caveats with datasets that you need to watch out for, so it is important to have an eye for detail.
+It was also tricky creating plots because we had to consider how to form them in order to answer our questions. We learned that bouncing off ideas and drawing them out is a good way to figure out which plot is best.
+
+### Acknowledgements
+We acknowledge the following people:\
+__Aileen Li__, worked on:\
+-Tidying\
+-Joining/Merging\
+-Wrangling\
+-Discussion\
+
+__Nyah Strickland__, worked on:\
+-Tidying\
+-Joining/Merging\
+-Visualizing\
+-Discussion\
+
+
+
+
+
+
