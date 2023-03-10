@@ -188,7 +188,6 @@ rqs |>
   summarize(mean=mean(All_Property_Burglary_Rates))
 ```
 
-<<<<<<< HEAD
 There are 1,250 values of the State variable, which is a character vector.
 
 For Year in rqs, the earliest year is 1992 and most recent year is 2016. The median and average year is 2004.
@@ -201,7 +200,7 @@ The average rate of all reported offenses of Property-related Burglaries per 100
 
 
 =======
->>>>>>> 00717dfce425fae45c5ea66e7107d7a92c1624b5
+
 # Visualizing
 ```{r}
 # find max violent crime rate
