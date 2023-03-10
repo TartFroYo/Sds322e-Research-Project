@@ -234,7 +234,7 @@ research_questions %>%
         y = "Federal Funds to State Public Schools ($)") + scale_x_continuous(name = "Years (1992-2016)", breaks =seq(1992, 2016,4)) + theme(axis.text.x = element_text(angle=90)) + theme_bw() +
 # Connect each state's points with a line
         geom_line(aes(color = State)) +
-        theme(legend.position = "none")
+        theme(legend.position = "none") + geom_smooth(method = "lm", color = "black")
 ```
 
 The distribution of federal funds to state public schools over 1992-2016 generally increases. Though the funds decrease between 2010 and 2012 and increase again after that time period. This decrease in funds during 2010-2012 is likely due to the consequences of the government overspending following the U.S. 2008 recession.
