@@ -13,7 +13,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-  For many years, a number of U.S. states have made changes to public school funding. One of our research questions is if there is a relationship between change in federal revenue for public schools and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship, depending on what kind, states can make changes in their budget for the betterment of their enrolled students. We expected the more funding for public schools, the less violent crimes there are by state.
+  Many U.S. states have made changes to public school funding. One of our research questions is if there is a relationship between change in federal revenue for public schools and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship, depending on what kind, states can make changes in their budget for the betterment of their enrolled students. We expected the more funding for public schools, the less violent crimes there are by state.
   
   As inflation increases annually, household incomes must also rise to adjust for standard of living in each state. Our second research question is if there is a relationship between median household income and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship between these two datasets, then state governments should make changes in their policies to help states where households are most affected. We expect the greater the median household income, the less violent crimes there are by state. 
 
@@ -140,22 +140,33 @@ med_income = med_income_tidy
 ```
 
 # Joining/Merging
+
 ```{r}
 # Note how many observations are in each data set
 nrow(us_education)
 ncol(us_education)
 nrow(crime_rate)
 ncol(crime_rate)
+nrow(med_income)
+ncol(med_income)
 
 # Left join state_crime to us_education by key variable Year and State
-# Left joining crime_rate to us_education makes the question1 dataset start with 1992 
+research_questions <- left_join(us_education,crime_rate, by = c("Year", "State")) %>%
+  filter(!is.na(Federal_Revenue)) 
+
+# Left join med_income to prev. joined dataset by same key var.s
+med_income$Year = as.numeric(med_income$Year)
+research_questions = left_join(research_questions, med_income, by = c("Year", "State"))
+ 
 # Filter missing values of federal revenue 
-research_questions <- left_join(us_education,crime_rate, by = c("Year", "State")) %>% filter(!is.na(Federal_Revenue)) 
-research_questions
 nrow(research_questions)
+
 ```
 
-There are 1682 observations and 1 unique variable (Federal_Revenue) in the us_education dataset while in the state_crime dataset there are 3055 observations and 4 unique variables (All_Property_Rates, All_Property_Burglary_Rates, All_Violent_Rates, All_Murder_Rates). Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these 2 datasets into a single dataset research_questions, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted. There are 1250 observations in the question1 dataset. This means that from the total number of overlapped observations (being 3055-1682=1373) in both us_education and state_crime datasets, there were 1373-1250=123 observations that had missing values. Since the crime_rate was left joined to us_education, the missing values likely arose from not matching with the year and state name for Federal_Revenue as this variable records state public school federal funding from 1992-2016.
+There are 1,682 observations and 1 unique variable (Federal_Revenue) in the us_education dataset, 3,055 observations in the state_crime dataset observations and 4 unique variables (All_Property_Rates, All_Property_Burglary_Rates, All_Violent_Rates, All_Murder_Rates), and 1,250 observations and 1 unique variable (Median_Income). 
+Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these 2 datasets into a single dataset research_questions, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted, and it is the reason we left join crime_rate to us_education rather than the other way around. After joining the med_income to the previously joined dataset, we still have 1,250 obervations but with more columns because the process added the unique columns from med_income to the observations with matching state and year in the latter, which was all of them.
+
+There are 1,250 observations in the research_question dataset. This means that from the total number of overlapped observations (being 3055-1682=1373) in both us_education and state_crime datasets, there were 1373-1250=123 observations that had missing values. Since the crime_rate was left joined to us_education, the missing values likely arose from not matching with the year and state name for Federal_Revenue as this variable records state public school federal funding from 1992-2016.
 
 
 
