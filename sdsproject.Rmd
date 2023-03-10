@@ -337,6 +337,7 @@ The relationship between all property burglary rates and state household median 
 # Discussion
 ### Is there a relationship between Federal Funding and Crimes?
 Overall, the relationship between all murder rates and public school federal funding is slightly negative. There was not a general trend to be distinguished from the scatterplot (vis5). Although there is stronger inverse relationship seen in California, Texas, New York, and Floria. This pattern is likely more apparent due to these states have a larger population than the other states. Yet, there could be other confounding factors that are influencing this trend. We conclude that public school federal funding does not have a large effect on murder rates across states. 
+
 ### Is there a relationship between Median Household Income and Crimes?
 Unlike the relationship between all murder rates and public school federal funding, the scatterplots (vis6) relationship between state median household income and burglary rates has a strong inverse relationship. A possible explanation for this could be due to the fact that having a higher household median income allows people to afford security appliances such as house cameras along with living in affluent neighborhoods where crime is relatively low. There could be other influences for this trend. Though, since every state has negative relationship, we conclude that there is a relationship between median household income and crimes.
 
