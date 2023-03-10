@@ -261,16 +261,22 @@ research_questions %>%
   theme_bw() +
 # Connect each state's points with a line
   geom_line(aes(color = State)) +
-  theme(legend.position = "none") + 
+  theme(legend.key.height= unit(5, 'mm'),
+        legend.key.width= unit(5, 'mm'),
+        legend.title = element_text(size=10),
+        legend.text = element_text(size=5)) +
+  # theme(legend.position = "none") + 
   geom_smooth(method = "lm", color = "black")
 ```
+
 The distribution of federal funds to state public schools over 1992-2016 generally increases. Though the funds decrease between 2010 and 2012 and increase again after that time period. This decrease in funds during 2010-2012 is likely due to the consequences of the government overspending following the U.S. 2008 recession.
 
 Create a second plot graphing two variables.
 ```{r vis4}
  # Graph 2 variables: x = year, y = median household income
-# Create a scatterplot tracking each state's median household income over time
+# Create a plot tracking each state's median household income over time
 rqs = rqs |> mutate(mi=Median_Income/1000)
+
 rqs %>% 
   ggplot(aes(x = Year, y = mi)) + 
   geom_point(aes(color = State), size =1/2) + 
@@ -281,7 +287,11 @@ rqs %>%
   theme_bw() +
 #Connect each state's points with a line
   geom_line(aes(color = State, group=State)) +
-  theme(legend.position = "none")
+    theme(legend.key.height= unit(5, 'mm'),
+        legend.key.width= unit(5, 'mm'),
+        legend.title = element_text(size=10),
+        legend.text = element_text(size=5))
+  # theme(legend.position = "none")
 ```
 The distribution of U.S. state median household income over 1992-2016 has a generally positive upward slope. This shows that as time goes on, state median household income also increases.
 
