@@ -178,7 +178,7 @@ The average rate of all reported offenses of Property-related Burglaries per 100
 # Visualizing
 ### 1 Variable Plots
 We created plots graphing one variable each.\
-__Figure 1__ Figure 1 plots All_Violent_Rates
+__Figure 1__ plots All_Violent_Rates
 ```{r vis1}
 # find max violent crime rate
 max(crime_rate$All_Violent_Rates)
@@ -194,7 +194,7 @@ crime_rate |> filter(Year==2002) |>
 ```
 The U.S. state distribution of all violent crimes is right-skewed with the peak being around 300 reported offenses per 100,000 population. Generally, violent crime rates between 150 and 450 reported offenses per 100000 population are common statewide.
 
-__Figure 2__ Figure 2 plots Fed_Rev.
+__Figure 2__ plots Fed_Rev.
 ```{r vis2}
 # plot U.S. federal funding to state public schools
 # find max federal funds to state public schools using summary
@@ -214,7 +214,7 @@ rqs %>% filter(Year==2002) |>
 The distribution of federal funds to state public schools is strongly skewed to the right. This shows that not a lot of state public schools receive federal funds.
 ### 2 Variable Plots
 We created plots graphing two variables each.\
-__Figure 3__ Figure 3 plots Year and Federal_Revenue
+__Figure 3__ plots Year and Federal_Revenue
 ```{r vis3}
 # Graph 2 variables: x = year, y = federal funds to state schools
 # Create a scatterplot tracking each state's public school federal funding over time 
@@ -236,7 +236,7 @@ rqs %>% ggplot(aes(x = Year, y = Federal_Revenue)) +
 ```
 The distribution of federal funds to state public schools over 1992-2016 generally increases. Though the funds decrease between 2010 and 2012 and increase again after that time period. This decrease in funds during 2010-2012 is likely due to the consequences of the government overspending following the U.S. 2008 recession.
 
-__Figure 4__ Figure 4 plots Year and mi, which is a function of Median_Income.
+__Figure 4__ plots Year and mi, which is a function of Median_Income.
 ```{r vis4}
  # Graph 2 variables: x = year, y = median household income
 # Create a plot tracking each state's median household income over time
@@ -260,7 +260,7 @@ rqs %>% ggplot(aes(x = Year, y = mi)) +
 The distribution of U.S. state median household income over 1992-2016 has a generally positive upward slope. This shows that as time goes on, state median household income also increases.
 ### 3 Variable Plots
 We created plots graphing three variables. We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.\
-__Figure 5__ Figure 5 plots All_Murder_Rates, Federal_Revenue, and State.
+__Figure 5__ plots All_Murder_Rates, Federal_Revenue, and State.
 ```{r vis5}
 # find max murder rates
 summary(rqs$All_Murder_Rates)
@@ -292,7 +292,7 @@ FM2 %>% ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) +
 ```
 The relationship between all murder rates and public school federal funds seems to have a slightly negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as California, Texas, and New York show a stronger inverse relationship between all murder rates and public school federal funds.
 
-__Figure 6__ Figure 6 plots All_Property_Burglary_Rates, Median_Income, and State.
+__Figure 6__ plots All_Property_Burglary_Rates, Median_Income, and State.
 ```{r vis6}
 # find max burglary rates
 summary(rqs$All_Property_Burglary_Rates)
