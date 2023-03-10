@@ -12,7 +12,6 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
   Many U.S. states have made changes to public school funding. One of our research questions is if there is a relationship between change in federal revenue for public schools and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship, depending on what kind, states can make changes in their budget for the betterment of their enrolled students. We expected the more funding for public schools, the less violent crimes there are by state.
   
   As inflation increases annually, household incomes must also rise to adjust for standard of living in each state. Our second research question is if there is a relationship between median household income and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship between these two datasets, then state governments should make changes in their policies to help states where households are most affected. We expect the greater the median household income, the less violent crimes there are by state. 
@@ -161,7 +160,6 @@ rqs = left_join(rqs, med_income, by = c("Year", "State"))
 # Filter missing values of federal revenue 
 nrow(rqs)
 ```
-
 Between us_education and state_crime, there are 2 ID variables (Year and State) in common. After joining these 2 datasets into a single dataset rqs, there are 1682 observations since the us_education spans from 1992-2016, causing the merged dataset to stop at that time frame. This is also the time period we wanted, and it is the reason we left join crime_rate to us_education rather than the other way around. After joining the med_income to the previously joined dataset, we still have 1,250 obervations but with more columns because the process added the unique columns from med_income to the observations with matching state and year in the latter, which was all of them.
 
 There are 1,250 observations in the rqs dataset. This means that from the total number of overlapped observations (being 3055-1682=1373) in both us_education and state_crime datasets, there were 1373-1250=123 observations that had missing values. Since the crime_rate was left joined to us_education, the missing values likely arose from not matching with the year and state name for Federal_Revenue as this variable records state public school federal funding from 1992-2016.
@@ -174,43 +172,45 @@ We created a new variable called Fed_Rev, which is calculated by dividing the Fe
 rqs = rqs |> mutate(Fed_Rev=Federal_Revenue/100000)
 ```
 
-We found the mean, median, maximum, and minimum for the following variables if it was possible.
-```{r sss}
+We then found the mean, median, maximum, and minimum for the following variables if it was possible.
+```{r sss1}
 # Compute summary stat.s
 summary(rqs$State)
 summary(rqs$Year)
+```
+There are 1,250 values of the State variable, which is a character vector.
 
+For Year in rqs, the earliest year is 1992 and most recent year is 2016. The median and average year is 2004. This makes sense sense we selected this time period and there is an equal amount of observations for each year.
+
+```{r sss2}
 rqs$Median_Income = as.numeric(rqs$Median_Income)
 summary(rqs$Median_Income)
+```
+The Median_Income variable has a minimum of $20,271 and a maximum of $76,260. The mean is $44,641, and the median is $36,568.
 
+```{r sss3}
 rqs |> 
   select(All_Property_Rates) |> 
   summarize(mean=mean(All_Property_Rates))
 summary(rqs$All_Property_Rates)
+```
+The average rate of all reported offenses of Property-related crimes per 100,000 population by state is 3,449 people per 100,000 population. The minimum and maximum rates are 1,407 per 100,000 and 7,500 per 100,000, respectively.
 
+```{r sss4}
 rqs |> 
   select(All_Property_Burglary_Rates) |> 
   summarize(mean=mean(All_Property_Burglary_Rates))
 summary(rqs$All_Property_Burglary_Rates)
 ```
-
-There are 1,250 values of the State variable, which is a character vector.
-
-For Year in rqs, the earliest year is 1992 and most recent year is 2016. The median and average year is 2004.
-
-The Median_Income variable has a minimum of $20,271 and a maximum of $76,260. The mean is $44,641, and the median is $36,568.
-
-The average rate of all reported offenses of Property-related crimes per 100,000 population by state is 3,449 people per 100,000 population
-The average rate of all reported offenses of Property-related Burglaries per 100,000 population is 731.
-
-WRITE
-
+The average rate of all reported offenses of Property-related Burglaries per 100,000 population is 731. The minimum and maximum rates are 201.7 per 100,000 and 1888.8 per 100,000.
 
 =======
 
 # Visualizing
 ### 1 Variable Plots
-Create a plot graphing one variable.
+We created plots graphing one variable each.
+
+__Figure 1__ Figure 1 plots All_Violent_Rates
 ```{r vis1}
 # find max violent crime rate
 max(crime_rate$All_Violent_Rates)
@@ -229,7 +229,7 @@ crime_rate |>
 
 The U.S. state distribution of all violent crimes is right-skewed with the peak being around 300 reported offenses per 100,000 population. Generally, violent crime rates between 150 and 450 reported offenses per 100000 population are common statewide.
 
-Create a second plot graphing one variable.
+__Figure 2__ Figure 2 plots Fed_Rev.
 ```{r vis2}
 # plot U.S. federal funding to state public schools
 # find max federal funds to state public schools using summary
@@ -250,7 +250,9 @@ rqs %>%
 The distribution of federal funds to state public schools is strongly skewed to the right. This shows that not a lot of state public schools receive federal funds.
 
 ### 2 Variable Plots
-Create a plot graphing two variables.
+We created plots graphing two variables each.
+
+__Figure 3__ Figure 3 plots Year and Federal_Revenue
 ```{r vis3}
 # Graph 2 variables: x = year, y = federal funds to state schools
 # Create a scatterplot tracking each state's public school federal funding over time 
@@ -274,7 +276,7 @@ rqs %>%
 
 The distribution of federal funds to state public schools over 1992-2016 generally increases. Though the funds decrease between 2010 and 2012 and increase again after that time period. This decrease in funds during 2010-2012 is likely due to the consequences of the government overspending following the U.S. 2008 recession.
 
-Create a second plot graphing two variables.
+__Figure 4__ Figure 4 plots Year and mi, which is a function of Median_Income.
 ```{r vis4}
  # Graph 2 variables: x = year, y = median household income
 # Create a plot tracking each state's median household income over time
@@ -299,7 +301,10 @@ rqs %>%
 ```
 The distribution of U.S. state median household income over 1992-2016 has a generally positive upward slope. This shows that as time goes on, state median household income also increases.
 
-Create a plot graphing three variables. We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
+### 3 Variable Plots
+We created plots graphing three variables. We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
+
+__Figure 5__ Figure 5 plots All_Murder_Rates, Federal_Revenue, and State.
 ```{r vis5}
 # find max murder rates
 summary(rqs$All_Murder_Rates)
@@ -308,9 +313,7 @@ FM1 <- rqs %>% arrange(State)
 FM1 <- FM1[1:625,]
 FM2 <- rqs %>% arrange(State)
 FM2 <- FM2[626:1250,]
-```
 
-```{r vis6}
 # graph of first 25 states in alphabetical order
 FM1 %>% 
   ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + 
@@ -339,8 +342,8 @@ FM2 %>%
 ```
 The relationship between all murder rates and public school federal funds seems to have a slightly negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as California, Texas, and New York show a stronger inverse relationship between all murder rates and public school federal funds.
 
-Create a second plot graphing three variables. We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
-```{r vis7}
+__Figure 6__ Figure 6 plots All_Property_Burglary_Rates, Median_Income, and State.
+```{r vis6}
 # find max burglary rates
 summary(research_questions$All_Property_Burglary_Rates)
 
@@ -352,10 +355,7 @@ BM1 <- rqs %>% arrange(State)
 BM1 <- BM1[1:625,]
 BM2 <- rqs %>% arrange(State)
 BM2 <- BM2[626:1250,]
-```
 
-DESCRIBE
-```{r vis8}
 # graph of first 25 states in alphabetical order
 BM1 %>% 
         ggplot(aes(x = All_Property_Burglary_Rates, 
