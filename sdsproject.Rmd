@@ -14,29 +14,25 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
   Many U.S. states have made changes to public school funding. One of our research questions is if there is a relationship between change in federal revenue for public schools and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship, depending on what kind, states can make changes in their budget for the betterment of their enrolled students. We expected the more funding for public schools, the less violent crimes there are by state.
   
-  As inflation increases annually, household incomes must also rise to adjust for standard of living in each state. Our second research question is if there is a relationship between median household income and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship between these two datasets, then state governments should make changes in their policies to help states where households are most affected. We expect the greater the median household income, the less violent crimes there are by state. 
-
-The following are the research questions we investigated:\
+  As inflation increases annually, household incomes must also rise to adjust for standard of living in each state. Our second research question is if there is a relationship between median household income and violent crimes by state during 1992-2016. We wanted to explore this because if there is a relationship between these two datasets, then state governments should make changes in their policies to help states where households are most affected. We expect the greater the median household income, the less violent crimes there are by state. The following are the research questions we investigated:
+  
 -__Is there a relationship between Federal Revenue for Public Schools and Crimes?__\
 -__Is there a relationship between Median Household Income and Crimes?__\
 
-And the following are the datasets we used:  
+And the following are the datasets we used(click to access):  
 -[Median Household Income by State](https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h08.xls)\
 -[U.S. Education Dataset](https://www.kaggle.com/datasets/noriuk/us-education-datasets-unification-project?resource=download)\
--[Crime Rate by State Dataset](https://corgis-edu.github.io/corgis/csv/state_crime/)\
+-[Crime Rate by State Dataset](https://corgis-edu.github.io/corgis/csv/state_crime/)
 
-The median household income, U.S. Education, and state crime rate datasets were acquired from the U.S. Census Bureau, U.S. Census Bureau and the National Center for Education Statistics (NCES), and Unified Crime Reporting Statistics and under the collaboration of the U.S. Department of Justice and the Federal Bureau of Investigation, respectively. We joined the data sets by the state names, which are the unique rows, and year. Specifically, we looked into the years from 1992 to 2016 for both research questions. For the median household income dataset, the unique variable is the median household income (Median income) in the current dollars dataset, measuring the annual state median household incomes without considering inflation. As for the U.S. Education dataset, the unique variable is federal revenue (FEDERAL_REVENUE), and for the violent crime rate dataset, the unique variables are violent crime rate (Data.Rates.Violent.All), nonviolent crime rate (Data.Rates.Property.All), burglary crime rate (Data.Rates.Property.Burglary), and murder rate (Data.Rates.Violent.Murder). The key variables are categorical while all the unique variables are numerical. These are the eight variables required for the project. The following are the links to the datasets: 
-
+The median household income, U.S. Education, and state crime rate datasets were acquired from the U.S. Census Bureau, U.S. Census Bureau and the National Center for Education Statistics (NCES), and Unified Crime Reporting Statistics and under the collaboration of the U.S. Department of Justice and the Federal Bureau of Investigation, respectively. We joined the data sets by the state names, which are the unique rows, and year. Specifically, we looked into the years from 1992 to 2016 for both research questions. For the median household income dataset, the unique variable is the median household income (Median income) in the current dollars dataset, measuring the annual state median household incomes without considering inflation. As for the U.S. Education dataset, the unique variable is federal revenue (FEDERAL_REVENUE), and for the violent crime rate dataset, the unique variables are violent crime rate (Data.Rates.Violent.All), nonviolent crime rate (Data.Rates.Property.All), burglary crime rate (Data.Rates.Property.Burglary), and murder rate (Data.Rates.Violent.Murder). The key variables are categorical while all the unique variables are numerical. These are the eight variables required for the project.
 =======
-
 First, we loaded the libraries and oeiginal datasets we needed.
-``` {r lib}
+``` {r lib, message=FALSE}
 library(tidyverse)
 library(readr)
 library(readxl)
 ```
-
-```{r dat}
+```{r dat, message=FALSE}
 states_all_extended <- read_csv("states_all_extended.csv")
 state_crime <- read_csv("state_crime.csv")
 h08_1_ <- read_excel("h08 (1).xls")
@@ -133,7 +129,6 @@ med_income = med_income_tidy
 ```
 
 # Joining/Merging
-
 We found the number of rows and columns in each other datasets before merging.
 ```{r num}
 # Note how many observations are in each data set
@@ -144,7 +139,6 @@ ncol(crime_rate)
 nrow(med_income)
 ncol(med_income)
 ```
-
 There are 1,682 observations and 1 unique variable (Federal_Revenue) in the us_education dataset, 3,055 observations in the state_crime dataset observations and 4 unique variables (All_Property_Rates, All_Property_Burglary_Rates, All_Violent_Rates, All_Murder_Rates), and 1,250 observations and 1 unique variable (Median_Income). 
 
 We first joined the us_education and crime_rate and then joined their merged result to med_income.
@@ -165,7 +159,6 @@ Between us_education and state_crime, there are 2 ID variables (Year and State) 
 There are 1,250 observations in the rqs dataset. This means that from the total number of overlapped observations (being 3055-1682=1373) in both us_education and state_crime datasets, there were 1373-1250=123 observations that had missing values. Since the crime_rate was left joined to us_education, the missing values likely arose from not matching with the year and state name for Federal_Revenue as this variable records state public school federal funding from 1992-2016.
 
 # Wrangling
-
 We created a new variable called Fed_Rev, which is calculated by dividing the Federal_Revenue by 100,000.
 ```{r mut}
 # Create new var. from other
@@ -179,7 +172,6 @@ summary(rqs$State)
 summary(rqs$Year)
 ```
 There are 1,250 values of the State variable, which is a character vector.
-
 For Year in rqs, the earliest year is 1992 and most recent year is 2016. The median and average year is 2004. This makes sense sense we selected this time period and there is an equal amount of observations for each year.
 
 ```{r sss2}
@@ -203,13 +195,10 @@ rqs |>
 summary(rqs$All_Property_Burglary_Rates)
 ```
 The average rate of all reported offenses of Property-related Burglaries per 100,000 population is 731. The minimum and maximum rates are 201.7 per 100,000 and 1888.8 per 100,000.
-
 =======
-
 # Visualizing
 ### 1 Variable Plots
 We created plots graphing one variable each.
-
 __Figure 1__ Figure 1 plots All_Violent_Rates
 ```{r vis1}
 # find max violent crime rate
@@ -226,7 +215,6 @@ crime_rate |>
   theme_bw()
 
 ```
-
 The U.S. state distribution of all violent crimes is right-skewed with the peak being around 300 reported offenses per 100,000 population. Generally, violent crime rates between 150 and 450 reported offenses per 100000 population are common statewide.
 
 __Figure 2__ Figure 2 plots Fed_Rev.
@@ -251,7 +239,6 @@ The distribution of federal funds to state public schools is strongly skewed to 
 
 ### 2 Variable Plots
 We created plots graphing two variables each.
-
 __Figure 3__ Figure 3 plots Year and Federal_Revenue
 ```{r vis3}
 # Graph 2 variables: x = year, y = federal funds to state schools
@@ -273,7 +260,6 @@ rqs %>%
   # theme(legend.position = "none") + 
   geom_smooth(method = "lm", color = "black")
 ```
-
 The distribution of federal funds to state public schools over 1992-2016 generally increases. Though the funds decrease between 2010 and 2012 and increase again after that time period. This decrease in funds during 2010-2012 is likely due to the consequences of the government overspending following the U.S. 2008 recession.
 
 __Figure 4__ Figure 4 plots Year and mi, which is a function of Median_Income.
@@ -303,7 +289,6 @@ The distribution of U.S. state median household income over 1992-2016 has a gene
 
 ### 3 Variable Plots
 We created plots graphing three variables. We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
-
 __Figure 5__ Figure 5 plots All_Murder_Rates, Federal_Revenue, and State.
 ```{r vis5}
 # find max murder rates
@@ -345,7 +330,7 @@ The relationship between all murder rates and public school federal funds seems 
 __Figure 6__ Figure 6 plots All_Property_Burglary_Rates, Median_Income, and State.
 ```{r vis6}
 # find max burglary rates
-summary(research_questions$All_Property_Burglary_Rates)
+summary(rqs$All_Property_Burglary_Rates)
 
 # find max murder rates
 summary(rqs$All_Property_Burglary_Rates)
@@ -386,11 +371,9 @@ BM2 %>%
   theme(legend.position = "none",
         strip.text = element_text(size = 7, margin=margin()))
 ```
-
 The relationship between all property burglary rates and state household median incomes seems to have a strong negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as Arkansas, Kentucky, and Mississippi show a weaker inverse relationship between all property burglary rates and state household median incomes.
 
 # Discussion
-
 ### Is there a relationship between Federal Funding and Crimes?
 
 ### Is there a relationship between Median Household Income and Crimes?
@@ -406,7 +389,6 @@ __Aileen Li__, worked on:\
 -Joining/Merging\
 -Wrangling\
 -Discussion\
-
 __Nyah Strickland__, worked on:\
 -Tidying\
 -Joining/Merging\
@@ -414,7 +396,6 @@ __Nyah Strickland__, worked on:\
 -Discussion\
 
 # References
-
 -[Median Household Income by State](https://www2.census.gov/programs-surveys/cps/tables/time-series/historical-income-households/h08.xls)\
 -[U.S. Education Dataset](https://www.kaggle.com/datasets/noriuk/us-education-datasets-unification-project?resource=download)\
 -[Crime Rate by State Dataset](https://corgis-edu.github.io/corgis/csv/state_crime/)\
