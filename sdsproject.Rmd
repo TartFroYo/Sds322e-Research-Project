@@ -209,7 +209,7 @@ WRITE
 =======
 
 # Visualizing
-DESCRIBE
+Create a second plot graphing one variable.
 ```{r vis1}
 # find max violent crime rate
 max(crime_rate$All_Violent_Rates)
@@ -219,7 +219,7 @@ crime_rate %>% ggplot(aes(x= All_Violent_Rates)) + geom_histogram(bin=10, color 
 
 The U.S. state distribution of all violent crimes is right-skewed with the peak being around 300 reported offenses per 100,000 population. Generally, violent crime rates between 150 and 450 reported offenses per 100000 population are common statewide.
 
-DESCRIBE
+Create a second plot graphing one variable.
 ```{r vis2}
 # plot U.S. federal funding to state public schools
 # find max federal funds to state public schools using summary
@@ -227,10 +227,9 @@ summary(us_education$Federal_Revenue)
 # plot a histogram of U.S. federal funding to state public schools
 us_education %>% ggplot(aes(x=Federal_Revenue)) + geom_histogram(bins=30, color ="darkblue", fill = "lightblue") + labs(title = "Distribution of Federal Funds to State Public Schools", y = "Frequency") + scale_x_continuous(name = "U.S. Federal Funding to State Public Schools", breaks =seq(0, 2000000,10000)) + theme(axis.text.x = element_text(angle=90)) + theme_bw()
 ```
+The distribution of federal funds to state public schools is strongly skewed to the right. This shows that not a lot of state public schools receive federal funds.
 
-The distribution of federal funds to state public schools is strongly skewed to the right. 
-
-DESCRIBE
+Create a plot graphing two variables.
 ```{r vis3}
 # Graph 2 variables: x = year, y = federal funds to state schools
 # Create a scatterplot tracking each state's public school federal funding over time 
@@ -241,10 +240,9 @@ research_questions %>%
         geom_line(aes(color = State)) +
         theme(legend.position = "none") + geom_smooth(method = "lm", color = "black")
 ```
-
 The distribution of federal funds to state public schools over 1992-2016 generally increases. Though the funds decrease between 2010 and 2012 and increase again after that time period. This decrease in funds during 2010-2012 is likely due to the consequences of the government overspending following the U.S. 2008 recession.
 
-DESCRIBE
+Create a second plot graphing two variables.
 ```{r vis4}
  # Graph 2 variables: x = year, y = median household income
 # Create a scatterplot tracking each state's median household income over time
@@ -254,10 +252,9 @@ med_income %>% ggplot(aes(x = Year, y = Median_Income)) + geom_point(aes(color =
         geom_line(aes(color = State)) +
         theme(legend.position = "none")
 ```
+The distribution of U.S. state median household income over 1992-2016 has a generally positive upward slope. This shows that as time goes on, state median household income also increases.
 
-The distribution of U.S. state median household income over 1992-2016 has a generally positive upward slope.
-
-DESCRIBE
+Create a plot graphing three variables.
 ```{r vis5}
 # find max murder rates
 summary(research_questions$All_Murder_Rates)
@@ -267,8 +264,9 @@ FM1 <- FM1[1:625,]
 FM2 <- research_questions %>% arrange(State)
 FM2 <- FM2[626:1250,]
 ```
+We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
 
-DESCRIBE
+
 ```{r vis6}
 # graph of first 25 states in alphabetical order
 FM1 %>% 
@@ -279,10 +277,9 @@ FM2 %>%
         ggplot(aes(x = All_Murder_Rates, y = Federal_Revenue)) + geom_point(aes(color = State), size =1/2) + labs(title = "The Relationship between Murder Rates & Public School Federal Funds", 
         y = "Federal Funds to State Public Schools ($)") + scale_x_continuous(name = "All Murder Rates", breaks =seq(0, 21,3)) + theme(axis.text.x = element_text(angle=90)) + theme_bw() + facet_wrap(vars(State)) + theme(legend.position = "none")
 ```
-
 The relationship between all murder rates and public school federal funds seems to have a slightly negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as California, Texas, and New York show a stronger inverse relationship between all murder rates and public school federal funds.
 
-DESCRIBE
+Create a second plot graphing three variables.
 ```{r vis7}
 # find max murder rates
 summary(research_questions$All_Property_Burglary_Rates)
@@ -292,6 +289,7 @@ BM1 <- BM1[1:625,]
 BM2 <- research_questions %>% arrange(State)
 BM2 <- BM2[626:1250,]
 ```
+We split the rsq dataset in half so that the data points on the scatterplots are more readily seen.
 
 DESCRIBE
 ```{r vis8}
