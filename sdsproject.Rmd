@@ -29,7 +29,7 @@ The median household income, U.S. Education, and state crime rate datasets were 
 
 =======
 
-First, we loaded the libraries and oeiginal datasets we needed.
+First, we loaded the libraries and original datasets we needed.
 ``` {r l&d, message=FALSE}
 library(tidyverse)
 library(readr)
@@ -156,25 +156,25 @@ We then found the mean, median, maximum, and minimum for the following variables
 summary(rqs$State)
 summary(rqs$Year)
 ```
-There are 1,250 values of the State variable, which is a character vector.
-For Year in rqs, the earliest year is 1992 and most recent year is 2016. The median and average year is 2004. This makes sense sense we selected this time period and there is an equal amount of observations for each year.
+There are 1,250 values of the State variable, which is a character vector. This makes sense since State is a nominal categorical variable.
+For Year in rqs, the earliest year is 1992 and most recent year is 2016. The median and average year is 2004. This makes sense sense we selected this time period and there is an equal amount of observations for each year, so the median and average would be the same.
 ```{r sss2}
 rqs$Median_Income = as.numeric(rqs$Median_Income)
 summary(rqs$Median_Income)
 ```
-The Median_Income variable has a minimum of $20,271 and a maximum of $76,260. The mean is $44,641, and the median is $36,568.
+The Median_Income variable has a minimum of $20,271 and a maximum of $76,260. The mean is $44,641, and the median is $36,568. This means that on average, the median household income across the U.S. States is $44,641. Considering the mean and median are not majorly far off from each other, this means there are more rates on the lower end than the higher, but there are still some rates closer to the maximum to result in the mean being greater than the median.
 ```{r sss3}
 rqs |> select(All_Property_Rates) |> 
   summarize(mean=mean(All_Property_Rates))
 summary(rqs$All_Property_Rates)
 ```
-The average rate of all reported offenses of Property-related crimes per 100,000 population by state is 3,449 people per 100,000 population. The minimum and maximum rates are 1,407 per 100,000 and 7,500 per 100,000, respectively.
+The average rate of all reported offenses of Property-related crimes per 100,000 population by state is 3,449 people per 100,000 population. The minimum and maximum rates are 1,407 per 100,000 and 7,500 per 100,000, respectively. COnsidering the average, this means there are more rates on the lower end than the higher.
 ```{r sss4}
 rqs |> select(All_Property_Burglary_Rates) |> 
   summarize(mean=mean(All_Property_Burglary_Rates))
 summary(rqs$All_Property_Burglary_Rates)
 ```
-The average rate of all reported offenses of Property-related Burglaries per 100,000 population is 731. The minimum and maximum rates are 201.7 per 100,000 and 1888.8 per 100,000.
+The average rate of all reported offenses of Property-related Burglaries per 100,000 population is 731. The minimum and maximum rates are 201.7 per 100,000 and 1888.8 per 100,000. Considering the mean rate is low, this means that many of the rate are on the smaller side and that the there are few rates that have a value equal to the maximum.
 # Visualizing
 ### 1 Variable Plots
 We created plots graphing one variable each.\
@@ -190,9 +190,8 @@ crime_rate |> filter(Year==2002) |>
   labs(title = "U.S. State Distribution of All Violent Crime Rates in 2002 ",y="Frequency") + 
   scale_x_continuous(name = "All Violent Crime Rates per 100,000 in 2002", breaks=seq(0, 1245,150)) + 
   theme_bw()
-
 ```
-The U.S. state distribution of all violent crimes is right-skewed with the peak being around 300 reported offenses per 100,000 population. Generally, violent crime rates between 150 and 450 reported offenses per 100000 population are common statewide.
+The U.S. state distribution of all violent crimes in 2002 seems to be right-skewed with the peak being around 300 reported offenses per 100,000 population. Most states in 2002 had all violent crime rates between 200 and 500.
 
 __Figure 2__ plots Fed_Rev.
 ```{r vis2}
@@ -206,12 +205,12 @@ rqs %>% filter(Year==2002) |>
   geom_histogram(bins=30, color ="darkblue", fill = "lightblue") + 
   labs(title = "Distribution of Federal Funds to State Public Schools in 2002", 
        y = "Frequency") +
-  scale_x_continuous(name = "U.S. Federal Funding to State Public Schools by Hundred Thousands in 2002") +
+  scale_x_continuous(name = "U.S. Federal Funding to State Public Schools by Hundred Thousand Dollars in 2002") +
   # theme(axis.text.x = element_text(angle=90)) + 
   theme_bw()
 
 ```
-The distribution of federal funds to state public schools is strongly skewed to the right. This shows that not a lot of state public schools receive federal funds.
+The distribution of federal funds to state public schools in 2002 is strongly skewed to the right. This shows that a lot of state public schools received federal funds under $1,000,000. There is one state, however, that received around $5,000,000.
 ### 2 Variable Plots
 We created plots graphing two variables each.\
 __Figure 3__ plots Year and Federal_Revenue
@@ -230,11 +229,11 @@ rqs %>% ggplot(aes(x = Year, y = Federal_Revenue)) +
   theme(legend.key.height= unit(5, 'mm'),
         legend.key.width= unit(5, 'mm'),
         legend.title = element_text(size=10),
-        legend.text = element_text(size=5)) +
+        legend.text = element_text(size=7)) +
   # theme(legend.position = "none") + 
   geom_smooth(method = "lm", color = "black")
 ```
-The distribution of federal funds to state public schools over 1992-2016 generally increases. Though the funds decrease between 2010 and 2012 and increase again after that time period. This decrease in funds during 2010-2012 is likely due to the consequences of the government overspending following the U.S. 2008 recession.
+The distribution of federal funds to state public schools over 1992-2016 generally increases. The funds decreased between 2010 and 2012 and increased again after that time period. This decrease in funds during 2010-2012 is likely due to the consequences of the government overspending following the U.S. 2008 recession. The state that received the most federal funds overall was California.
 
 __Figure 4__ plots Year and mi, which is a function of Median_Income.
 ```{r vis4}
