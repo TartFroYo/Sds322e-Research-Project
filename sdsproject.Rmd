@@ -331,7 +331,7 @@ BM2 %>% ggplot(aes(x = All_Property_Burglary_Rates,y = Median_Income)) +
   theme_bw() + facet_wrap(vars(State)) + 
   theme(legend.position = "none",strip.text = element_text(size = 7, margin=margin()))
 ```
-The relationship between all property burglary rates and state household median incomes seems to have a strong negative relationship. Though the relationship seems likely to be non-existent. A few outliers such as Arkansas, Kentucky, and Mississippi show a weaker inverse relationship between all property burglary rates and state household median incomes.
+The relationship between all property burglary rates and state household median incomes seems to have a strong negative relationship. A few outliers such as Arkansas, Kentucky, and Mississippi show a weaker inverse relationship between all property burglary rates and state household median incomes.
 
 ====
 
